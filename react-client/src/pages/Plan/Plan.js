@@ -53,7 +53,7 @@ const Plan = () => {
 
     return (
         <>
-            <Title title="제안서 - 작성 방법 및 예시"/>
+            <Title title="기획서 - 작성 방법 및 예시"/>
             <Tabs />
 
             <>
