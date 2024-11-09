@@ -1,0 +1,30 @@
+.menu {
+  background-color: #00A8E8;
+  width: 250px;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 10px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+/* active 상태일 때의 스타일 */
+.menu li.active a, .menu li.active{
+  background-color: white;  /* 배경색 흰색 */
+  color: #E65F2B;           /* 글자색 주황색 */  
+}
