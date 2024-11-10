@@ -39,13 +39,13 @@ exports.findOne = (req, res) => {
           res.send(data);
         } else {
           res.status(404).send({
-            message: `Cannot find Submission with id=${id}.`
+            message: `Cannot find Announcement with id=${id}.`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error retrieving Submission with id=" + id
+          message: "Error retrieving Announcement with id=" + id
         });
       });
   };
