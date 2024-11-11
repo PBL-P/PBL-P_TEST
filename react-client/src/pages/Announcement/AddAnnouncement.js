@@ -1,134 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
 import AnnouncementDataService from "../../services/announcement.service";
+import Title from "../../components/Title";
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-const AnnouncementDetailWrapper = styled.div`
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-`;
+const AddAnnouncement = ({ text, kind }) => {
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+  const location = useLocation(); // 현재 URL 경로 가져오기
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [createdBy, setCreatedBy] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [redirect, setRedirect] = useState(false);
 
-const AnnouncementTitle = styled.h1`
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-`;
+  // 목록으로 리다이렉트할 URL 설정
+  const getRedirectPath = () => {
+    return "/announcement";
+  };
 
-const AnnouncementContent = styled.p`
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-`;
-
-const CommentSection = styled.div`
-    margin-top: 30px;
-`;
-
-const CommentList = styled.ul`
-    list-style-type: none;
-    padding: 0;
-`;
-
-const CommentItem = styled.li`
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-`;
-
-const CommentForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-`;
-
-const Input = styled.input`
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-`;
-
-const Button = styled.button`
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    &:hover {
-        background-color: #0056b3;
+  // 데이터 가져오기
+  useEffect(() => {    
+    if (id) {              
+      AnnouncementDataService.get(id)
+        .then(response => {
+          const data = response.data;
+          setTitle(data.title);
+          setContent(data.content || "");
+          setCreatedBy(data.createdBy || "");
+        })
+        .catch(e => console.log(e));
     }
-`;
+  }, [id]);
 
-const AnnouncementDetail = () => {
-    const { id } = useParams();
-    const [announcement, setAnnouncement] = useState(null);
-    const [comment, setComment] = useState('');
-    const [comments, setComments] = useState([]);
+  const saveAnnouncement = () => {
+    console.log("Title:", title);
+    console.log("Content:", content);
+    console.log("CreatedBy:", createdBy);
 
-    useEffect(() => {
-        // 특정 공지사항 데이터를 가져오는 함수
-        const fetchData = async () => {
-            try {
-                const response = await AnnouncementDataService.get(id);
-                setAnnouncement(response.data);
-                setComments(response.data.comments || []);
-            } catch (e) {
-                console.error("Error fetching announcement data:", e);
-            }
-        };
-        fetchData();
-    }, [id]);
+    const formData = new FormData();
+    formData.append('title', title);  
+    formData.append('content', content);
+    formData.append('createdBy', createdBy);
 
-    const handleCommentSubmit = async (e) => {
-        e.preventDefault();
-        // API 호출하여 댓글 등록
-        try {
-            await fetch(`/api/announcements/${id}/comments`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: comment })
-            });
-            setComments([...comments, { text: comment }]);
-            setComment('');
-        } catch (e) {
-            console.error("Error submitting comment:", e);
-        }
-    };
+    // FormData의 내용을 확인
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
 
-    return (
-        <AnnouncementDetailWrapper>
-            {announcement ? (
-                <>
-                    <AnnouncementTitle>{announcement.title}</AnnouncementTitle>
-                    <AnnouncementContent>{announcement.content}</AnnouncementContent>
-                    <CommentSection>
-                        <h2>댓글</h2>
-                        <CommentList>
-                            {comments.map((c, index) => (
-                                <CommentItem key={index}>{c.text}</CommentItem>
-                            ))}
-                        </CommentList>
-                        <CommentForm onSubmit={handleCommentSubmit}>
-                            <Input 
-                                type="text" 
-                                placeholder="댓글 작성" 
-                                value={comment} 
-                                onChange={(e) => setComment(e.target.value)} 
-                                required 
-                            />
-                            <Button type="submit">등록</Button>
-                        </CommentForm>
-                    </CommentSection>
-                </>
-            ) : (
-                <p>로딩 중...</p>
-            )}
-        </AnnouncementDetailWrapper>
-    );
+    // 저장 함수 선택
+    const saveFunction = id ? AnnouncementDataService.update : AnnouncementDataService.create;
+
+    // 요청 보내기
+    const request = id ? saveFunction(id, formData) : saveFunction(formData);
+
+    request
+      .then(response => {
+        setSubmitted(true);
+        console.log("Response:", response.data);
+      })
+      .catch(e => {
+        console.error("Error:", e.response ? e.response.data : e.message);
+      });
+  };
+
+  const newAnnouncement = () => {
+    setRedirect(true);
+  };
+
+  if (redirect) {
+    return <Navigate to={getRedirectPath()} />; // 목록으로 리다이렉트할 경로를 설정
+  }
+
+  return (
+    <>
+      <Title title={text} />
+      <div className="submit-form">
+        {submitted ? (
+          <div>
+            <h4>공지사항 정상적으로 제출되었습니다!</h4>
+            <button className="btn btn-success" onClick={newAnnouncement}>
+              목록으로
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="form-group">
+              <label htmlFor="title">제목</label>
+              <input
+                type="text"
+                className="form-control"
+                id="title"
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                name="title"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="content">내용</label>
+              <textarea
+                className="form-control"
+                id="content"
+                required
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                name="content"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="createdBy">작성자</label>
+              <input
+                type="text"
+                className="form-control"
+                id="createdBy"
+                required
+                value={createdBy}
+                onChange={(e) => setCreatedBy(e.target.value)}
+                name="createdBy"
+              />
+            </div>
+            <button onClick={saveAnnouncement} className="btn btn-success">
+              {id ? "수정하기" : "등록하기"}
+            </button>
+          </>
+        )}
+      </div>
+    </>
+  );
 };
 
-export default AnnouncementDetail;
+export default AddAnnouncement;
