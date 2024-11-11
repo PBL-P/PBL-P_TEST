@@ -54,7 +54,6 @@ const Announcement = () => {
     return (
         <>
             <Title title="공지사항 - 작성 방법 및 예시"/>
-            <Tabs />
 
             <>
                 <div style={{display: "flex", justifyContent: "space-between", alignItems:"center", padding:"8px 24px", borderBottom:"1px solid rgba(0,0,0,0.1)"}}>

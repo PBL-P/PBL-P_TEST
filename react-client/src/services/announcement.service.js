@@ -28,6 +28,22 @@ class AnnouncementDataService {
 	findByTitle(title) {
     return http.get(`/announcement/submit?title=${title}`);
   }
+  // 댓글 등록 기능
+  c_create(announcementId, data) {
+    return http.post(`/announcement/${announcementId}/comment`, data);
+  }
+
+  c_getAll(announcementId) {
+    return http.get(`/announcement/${announcementId}/comment`);
+  }
+
+  c_update(announcementId, commentId, data) {
+    return http.put(`/announcement/${announcementId}/comment/${commentId}`, data);
+  }
+
+  c_delete(announcementId, commentId) {
+    return http.delete(`/announcement/${announcementId}/comment/${commentId}`);
+  }
 }
 
 export default new AnnouncementDataService();

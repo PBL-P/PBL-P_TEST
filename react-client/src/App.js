@@ -36,7 +36,7 @@ import ReportSubmitDetail from "./pages/Report/ReportSubmitDetail";
 
 import Announcement from "./pages/Announcement/Announcement";
 import AddAnnouncement from "./pages/Announcement/AddAnnouncement";
-// import AnnouncementDetail from "./pages/Announcement/AnnouncementDetail";
+import AnnouncementDetail from "./pages/Announcement/AnnouncementDetail";
 
 
 class App extends Component {
@@ -107,8 +107,10 @@ class App extends Component {
               
               {/* 결과 보고서 부분 시작 */}
                 <Route path="/announcement" element={<Announcement />} />
-                {/* <Route path="/announcement/:id" element={<AnnouncementDetail />} /> */}
-                <Route path="/announcement/register" element={<AddAnnouncement text="공지사항 - 작성 방법 및 예시" kind="sample" />} />
+                <Route path="/announcement/:id" element={<AnnouncementDetail />} />
+                <Route path="/announcement/register" element={<AddAnnouncement text="공지사항" />} />
+                {/* 공지사항 업데이트 */}
+                <Route path="/announcement/register/:id" element={<AddAnnouncement text="공지사항" />} />
 
               {/* 결과 보고서 부분 종료 */}
               

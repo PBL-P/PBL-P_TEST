@@ -11,6 +11,8 @@ const AddAnnouncement = ({ text, kind }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [createdBy, setCreatedBy] = useState("");
+  const [file, setFile] = useState(null);
+  const [existingFile, setExistingFile] = useState(null); // 기존 파일 정보 저장
   const [submitted, setSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
@@ -28,26 +30,25 @@ const AddAnnouncement = ({ text, kind }) => {
           setTitle(data.title);
           setContent(data.content || "");
           setCreatedBy(data.createdBy || "");
+          setExistingFile(data.file_name || null); // 기존 파일 이름 저장
+
         })
         .catch(e => console.log(e));
     }
   }, [id]);
 
   const saveAnnouncement = () => {
-    console.log("Title:", title);
-    console.log("Content:", content);
-    console.log("CreatedBy:", createdBy);
 
     const formData = new FormData();
     formData.append('title', title);  
     formData.append('content', content);
     formData.append('createdBy', createdBy);
-
-    // FormData의 내용을 확인
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
+    // 파일 추가
+    if (file) {
+      formData.append('file', file);
+    } else if (existingFile) {
+      formData.append('file_name', existingFile);
     }
-
     // 저장 함수 선택
     const saveFunction = id ? AnnouncementDataService.update : AnnouncementDataService.create;
 
@@ -118,6 +119,19 @@ const AddAnnouncement = ({ text, kind }) => {
                 value={createdBy}
                 onChange={(e) => setCreatedBy(e.target.value)}
                 name="createdBy"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="file">파일 첨부</label>
+              {existingFile && (
+                <p>현재 파일: {existingFile}</p> // 기존 파일 이름 표시
+              )}
+              <input
+                type="file"
+                className="form-control-file"
+                id="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                name="file"
               />
             </div>
             <button onClick={saveAnnouncement} className="btn btn-success">
