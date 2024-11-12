@@ -12,6 +12,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      file_name: {
+        type: Sequelize.STRING,
+        allowNull: true,
+     },
+      file_path: {
+        type: Sequelize.STRING,
+        allowNull: true,
+     },
     });
   
     return Announcement;
