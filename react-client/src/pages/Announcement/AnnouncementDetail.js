@@ -7,7 +7,7 @@ const AnnouncementDetail = () => {
     const { id } = useParams();
     const [announcement, setAnnouncement] = useState(null);
     const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState({ createdBy: "", content: "" });
+    const [newComment, setNewComment] = useState({ commenter: "", content: "" });
 
     // 공지사항 데이터를 가져오는 함수
     const getAnnouncement = () => {
@@ -34,20 +34,21 @@ const AnnouncementDetail = () => {
 
     // 댓글을 제출하는 함수
     const submitComment = () => {
-        if (newComment.createdBy.trim() === "" || newComment.content.trim() === "") {
+        if (newComment.commenter.trim() === "" || newComment.content.trim() === "") {
             alert("작성자 이름과 내용을 모두 입력해주세요.");
             return;
         }
 
-        const formData = new FormData();
-        formData.append("announcementId", id);
-        formData.append("createdBy", newComment.createdBy);
-        formData.append("content", newComment.content);
+        const commentData = {
+            announcementId: id,
+            commenter: newComment.commenter,
+            content: newComment.content
+        };
 
-        AnnouncementDataService.c_create(id, formData)
+        AnnouncementDataService.c_create(id, commentData)
             .then(response => {
                 setComments([...comments, response.data]); // 새로운 댓글 추가
-                setNewComment({ createdBy: "", content: "" }); // 입력 필드 초기화
+                setNewComment({ commenter: "", content: "" }); // 입력 필드 초기화
             })
             .catch(e => {
                 console.error("Error submitting comment:", e);
@@ -71,10 +72,13 @@ const AnnouncementDetail = () => {
     // 댓글 수정 완료
     const saveEdit = (commentId) => {
         const commentToUpdate = comments.find(comment => comment.id === commentId);
-        const formData = new FormData();
-        formData.append("content", commentToUpdate.content);
+        
+        // 서버에 전달할 데이터 객체
+        const updatedData = {
+            content: commentToUpdate.content
+        };
 
-        AnnouncementDataService.c_update(commentId, formData)
+        AnnouncementDataService.c_update(id, commentId, updatedData)
             .then(() => {
                 setComments(comments.map(comment =>
                     comment.id === commentId ? { ...comment, isEditing: false } : comment
@@ -87,7 +91,7 @@ const AnnouncementDetail = () => {
 
     // 댓글 삭제
     const deleteComment = (commentId) => {
-        AnnouncementDataService.c_delete(commentId)
+        AnnouncementDataService.c_delete(id, commentId)
             .then(() => {
                 setComments(comments.filter(comment => comment.id !== commentId));
             })
@@ -117,7 +121,7 @@ const AnnouncementDetail = () => {
                             <ul>
                                 {comments.map((comment) => (
                                     <li key={comment.id} style={{ borderBottom: '1px solid #ddd', padding: '8px 0' }}>
-                                        <p><strong>{comment.createdBy}</strong> {new Date(comment.createdAt).toLocaleDateString('ko-KR')} {new Date(comment.createdAt).toLocaleTimeString('ko-KR')}</p>
+                                        <p><strong>{comment.commenter}</strong> {new Date(comment.updatedAt).toLocaleDateString('ko-KR')} {new Date(comment.updatedAt).toLocaleTimeString('ko-KR')}</p>
                                         {comment.isEditing ? (
                                             <>
                                                 <textarea
@@ -153,8 +157,8 @@ const AnnouncementDetail = () => {
                             <input
                                 type="text"
                                 placeholder="작성자 이름"
-                                value={newComment.createdBy}
-                                onChange={(e) => setNewComment({ ...newComment, createdBy: e.target.value })}
+                                value={newComment.commenter}
+                                onChange={(e) => setNewComment({ ...newComment, commenter: e.target.value })}
                                 style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
                             />
                             <textarea
