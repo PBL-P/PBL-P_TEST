@@ -32,7 +32,7 @@ const ProposalDetail = () => {
                         <h3>{proposal.title}</h3>
                         <p><strong>내용:</strong> {proposal.content}</p>
                         <p>
-                            <strong>첨부파일:</strong>{" "}
+                            <strong>첨부 자료:</strong>{" "}
                             <a 
                                 href={`http://localhost:8080/${proposal.file_path}`} 
                                 download={proposal.file_name}

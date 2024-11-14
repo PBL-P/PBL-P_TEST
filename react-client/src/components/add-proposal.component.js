@@ -5,29 +5,31 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 
 const AddProposal = ({ text, kind }) => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); // 현재 URL 경로 가져오기
+  const location = useLocation();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [teamName, setTeamName] = useState("");
   const [member, setMember] = useState("");
   const [thought, setThought] = useState("");
-  const [file, setFile] = useState(null);
-  const [existingFile, setExistingFile] = useState(null); // 기존 파일 정보 저장
+  const [presentationFile, setPresentationFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [demoVideo, setDemoVideo] = useState(null); // 시연 동영상
+  const [sourceFile, setSourceFile] = useState(null); // 소스 프로그램 파일
+  const [reportFile, setReportFile] = useState(null); // 결과 보고서 파일
+  const [existingFiles, setExistingFiles] = useState({ fileName: null, filePath: null });
   const [submitted, setSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
-  // document_key 설정
   const getDocumentKey = () => {
     if (location.pathname.includes("proposal")) return "pro";
     if (location.pathname.includes("plan")) return "pl";
     if (location.pathname.includes("design")) return "des";
     if (location.pathname.includes("report")) return "rep";
-    return null; // 매칭되는 key가 없는 경우
+    return null;
   };
 
-  // 목록으로 리다이렉트할 URL 설정
   const getRedirectPath = () => {
     const key = getDocumentKey();
     if (key === "pro") return "/proposal";
@@ -37,9 +39,8 @@ const AddProposal = ({ text, kind }) => {
     return "/";
   };
 
-  // 데이터 가져오기
-  useEffect(() => {    
-    if (id) {              
+  useEffect(() => {
+    if (id) {
       const fetchData = kind === "sample" ? ProposalDataService.get : ProposalDataService.s_get;
       fetchData(id)
         .then(response => {
@@ -49,7 +50,13 @@ const AddProposal = ({ text, kind }) => {
           setTeamName(data.teamName || "");
           setMember(data.member || "");
           setThought(data.thought || "");
-          setExistingFile(data.file_name || null); // 기존 파일 이름 저장
+
+          const fileNames = data.file_name ? data.file_name.split("|") : [];
+          const filePaths = data.file_path ? data.file_path.split("|") : [];
+          setExistingFiles({
+            fileName: fileNames,
+            filePath: filePaths
+          });
         })
         .catch(e => console.log(e));
     }
@@ -57,30 +64,62 @@ const AddProposal = ({ text, kind }) => {
 
   const saveProposal = () => {
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('document_type_id', getDocumentKey()); // document_type_id 설정
+    formData.append("title", title);
+    formData.append("document_type_id", getDocumentKey());
   
     if (kind === "sample") {
-      formData.append('content', content); // 샘플의 경우 내용 추가
-    } else if (kind === "version") {
-      formData.append('teamName', teamName); // 버전의 경우 팀 정보 추가
-      formData.append('member', member);
-      formData.append('thought', thought);
+      formData.append("content", content);
+    } else if (kind === "version" || kind === "report") {
+      formData.append("teamName", teamName);
+      formData.append("member", member);
+      formData.append("thought", thought);
     }
   
-    // 파일 추가
-    if (file) {
-      formData.append('file', file);
-    } else if (existingFile) {
-      formData.append('file_name', existingFile);
+    // 고정된 순서로 파일명을 배열에 배치: 발표자료, 발표 동영상, 시연 동영상, 소스 프로그램, 결과 보고서
+    const fileNames = ["", "", "", "", ""];
+    const filePaths = ["", "", "", "", ""];
+  
+    // 각 파일을 해당 인덱스에 배치합니다.
+    if (presentationFile) {
+      formData.append("presentationFile", presentationFile);
+      fileNames[0] = presentationFile.name;
+      filePaths[0] = "uploads/" + presentationFile.name;
+    }
+    if (videoFile) {
+      formData.append("videoFile", videoFile);
+      fileNames[1] = videoFile.name;
+      filePaths[1] = "uploads/" + videoFile.name;
+    }
+    if (demoVideo) {
+      formData.append("demoVideo", demoVideo);
+      fileNames[2] = demoVideo.name;
+      filePaths[2] = "uploads/" + demoVideo.name;
+    }
+    if (sourceFile) {
+      formData.append("sourceFile", sourceFile);
+      fileNames[3] = sourceFile.name;
+      filePaths[3] = "uploads/" + sourceFile.name;
+    }
+    if (reportFile) {
+      formData.append("reportFile", reportFile);
+      fileNames[4] = reportFile.name;
+      filePaths[4] = "uploads/" + reportFile.name;
     }
   
-    // 저장 함수 선택
-    const saveFunction = (kind === "sample")
+    // 구분자로 연결한 파일명 및 경로 추가
+    formData.append("file_name", fileNames.join("|"));
+    formData.append("file_path", filePaths.join("|"));
+  
+    // formData 내용을 console.log로 출력
+    console.log("FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
+    const saveFunction = kind === "sample"
       ? (id ? ProposalDataService.update : ProposalDataService.create)
       : (id ? ProposalDataService.s_update : ProposalDataService.s_create);
   
-    // 요청 보내기
     const request = id ? saveFunction(id, formData) : saveFunction(formData);
   
     request
@@ -89,17 +128,18 @@ const AddProposal = ({ text, kind }) => {
         console.log("Response:", response.data);
       })
       .catch(e => {
-        console.error("Error:", e.response ? e.response.data : e.message); // 오류 로깅
+        console.error("Error:", e.response ? e.response.data : e.message);
       });
   };
   
   
+
   const newProposal = () => {
     setRedirect(true);
   };
 
   if (redirect) {
-    return <Navigate to={getRedirectPath()} />; // 목록으로 리다이렉트할 경로를 설정
+    return <Navigate to={getRedirectPath()} />;
   }
 
   return (
@@ -129,6 +169,7 @@ const AddProposal = ({ text, kind }) => {
             </div>
 
             {kind === "sample" && (
+              <>
               <div className="form-group">
                 <label htmlFor="content">내용</label>
                 <textarea
@@ -140,9 +181,20 @@ const AddProposal = ({ text, kind }) => {
                   name="content"
                 />
               </div>
+              <div className="form-group">
+                <label htmlFor="presentationFile">첨부 자료</label>
+                <input
+                  type="file"
+                  className="form-control-file"
+                  id="presentationFile"
+                  onChange={(e) => setPresentationFile(e.target.files[0])}
+                  name="presentationFile"
+                />
+              </div>
+              </>
             )}
 
-            {kind === "version" && (
+            {(kind === "version" || kind === "report") && (
               <>
                 <div className="form-group">
                   <label htmlFor="teamName">팀명</label>
@@ -179,22 +231,67 @@ const AddProposal = ({ text, kind }) => {
                     name="thought"
                   />
                 </div>
+                <div className="form-group">
+                  <label htmlFor="presentationFile">발표 자료</label>
+                  <input
+                    type="file"
+                    className="form-control-file"
+                    id="presentationFile"
+                    onChange={(e) => setPresentationFile(e.target.files[0])}
+                    name="presentationFile"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="videoFile">발표 동영상 (선택사항)</label>
+                  <input
+                    type="file"
+                    className="form-control-file"
+                    id="videoFile"
+                    onChange={(e) => setVideoFile(e.target.files[0])}
+                    name="videoFile"
+                  />
+                </div>
               </>
             )}
 
-            <div className="form-group">
-              <label htmlFor="file">파일 첨부</label>
-              {existingFile && (
-                <p>현재 파일: {existingFile}</p> // 기존 파일 이름 표시
-              )}
-              <input
-                type="file"
-                className="form-control-file"
-                id="file"
-                onChange={(e) => setFile(e.target.files[0])}
-                name="file"
-              />
-            </div>
+            {kind === "report" && (
+              <>                
+                <div className="form-group">
+                  <label htmlFor="demoVideo">시연 동영상</label>
+                  <input
+                    type="file"
+                    className="form-control-file"
+                    id="demoVideo"
+                    onChange={(e) => setDemoVideo(e.target.files[0])}
+                    name="demoVideo"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="sourceFile">소스 프로그램</label>
+                  <input
+                    type="file"
+                    className="form-control-file"
+                    id="sourceFile"
+                    onChange={(e) => setSourceFile(e.target.files[0])}
+                    name="sourceFile"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reportFile">결과 보고서</label>
+                  <input
+                    type="file"
+                    className="form-control-file"
+                    id="reportFile"
+                    onChange={(e) => setReportFile(e.target.files[0])}
+                    name="reportFile"
+                  />
+                </div>
+              </>
+            )}
+
+
+
             <button onClick={saveProposal} className="btn btn-success">
               {id ? "수정하기" : "등록하기"}
             </button>

@@ -22,7 +22,40 @@ const ReportSubmitDetail = () => {
     useEffect(() => {
         getReport(id);
     }, [id]);
+    // 파일 정보를 나누어 표시
+    const renderFiles = () => {
+        if (!report.fileName || !report.filePath) return null;
 
+        const fileNames = report.fileName.split("|");
+        const filePaths = report.filePath.split("|");
+
+        return (
+            <div>
+                {fileNames[0] && filePaths[0] && (
+                    <p>
+                        <strong>발표 자료:</strong>{" "}
+                        <a
+                            href={`http://localhost:8080/${filePaths[0]}`}
+                            download={fileNames[0]}
+                        >
+                            {fileNames[0]}
+                        </a>
+                    </p>
+                )}
+                {fileNames[1] && filePaths[1] && (
+                    <p>
+                        <strong>발표 동영상:</strong>{" "}
+                        <a
+                            href={`http://localhost:8080/${filePaths[1]}`}
+                            download={fileNames[1]}
+                        >
+                            {fileNames[1]}
+                        </a>
+                    </p>
+                )}
+            </div>
+        );
+    };
     return (
         <>
             <Title title="결과 보고서 - 제출 버전 관리" />
@@ -33,7 +66,7 @@ const ReportSubmitDetail = () => {
                         <p><strong>팀명:</strong> {report.teamName}</p>
                         <p><strong>팀원:</strong> {report.member}</p>
                         <p><strong>소감문:</strong> {report.thought}</p>
-                        <p><strong>첨부파일:</strong> {report.fileName || '없음'}</p>
+                        <p><strong>첨부파일:</strong> {renderFiles() || '없음'}</p>
                         <p><strong>작성일:</strong> {new Date(report.createdAt).toLocaleDateString('ko-KR')}</p>
                     </>
                 ) : (

@@ -46,6 +46,10 @@ const ReportSubmit = () => {
         navigate(`/report/submit/${id}`);
     };
 
+    // 수정 버튼 클릭 시 실행될 함수
+    const handleEditClick = (id) => {
+        navigate(`/report/submit/register/${id}`);
+    };
     return (
         <>
             <Title title="결과 보고서 - 제출 버전 관리"/>
@@ -89,6 +93,14 @@ const ReportSubmit = () => {
                                     <td>{new Date(report.createdAt).toLocaleDateString('ko-KR')}</td>
                                     <td>
                                         <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() => handleEditClick(report.id)}
+                                        >
+                                            수정
+                                        </button>
+                                        
+                                        <button
+                                            style={{ marginLeft: '4px' }}
                                             className="btn btn-danger btn-sm"
                                             onClick={() => deleteReport(report.id)}
                                         >

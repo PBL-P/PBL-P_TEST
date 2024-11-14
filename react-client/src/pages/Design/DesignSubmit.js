@@ -45,7 +45,10 @@ const DesignSubmit = () => {
     const handleDesignClick = (id) => {
         navigate(`/design/submit/${id}`);
     };
-
+    // 수정 버튼 클릭 시 실행될 함수
+    const handleEditClick = (id) => {
+        navigate(`/design/submit/register/${id}`);
+    };
     return (
         <>
             <Title title="설계서 - 제출 버전 관리"/>
@@ -89,7 +92,14 @@ const DesignSubmit = () => {
                                     <td>{new Date(design.createdAt).toLocaleDateString('ko-KR')}</td>
                                     <td>
                                         <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() => handleEditClick(design.id)}
+                                        >
+                                            수정
+                                        </button>
+                                        <button
                                             className="btn btn-danger btn-sm"
+                                            style={{ marginLeft: '4px' }}
                                             onClick={() => deleteDesign(design.id)}
                                         >
                                             삭제

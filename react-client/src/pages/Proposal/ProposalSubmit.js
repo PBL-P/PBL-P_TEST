@@ -101,6 +101,7 @@ const ProposalSubmit = () => {
                                         </button>
                                         
                                         <button
+                                            style={{ marginLeft: '4px' }}
                                             className="btn btn-danger btn-sm"
                                             onClick={() => deleteProposal(proposal.id)}
                                         >

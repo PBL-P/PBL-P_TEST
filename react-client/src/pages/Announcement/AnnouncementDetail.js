@@ -116,6 +116,19 @@ const AnnouncementDetail = () => {
                         <p><strong>작성일:</strong> {new Date(announcement.createdAt).toLocaleDateString('ko-KR')}</p>
                         <p><strong>수정일:</strong> {new Date(announcement.updatedAt).toLocaleDateString('ko-KR')}</p>
 
+                        {/* 파일 다운로드 링크 */}
+                        {announcement.file_name && announcement.file_path && (
+                            <p>
+                                <strong>첨부파일:</strong>{" "}
+                                <a
+                                    href={`http://localhost:8080/${announcement.file_path}`}
+                                    download={announcement.file_name}
+                                >
+                                    {announcement.file_name}
+                                </a>
+                            </p>
+                        )}
+
                         <div style={{ marginTop: '24px' }}>
                             <h4>댓글 ({comments.length})</h4>
                             <ul>

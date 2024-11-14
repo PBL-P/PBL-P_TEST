@@ -28,12 +28,12 @@ module.exports = app => {
   router.delete("/design/submit", submission.deleteAll);
 
   // 결과 보고서 관련 라우트
-  router.get("/report", submission.findAll);
-  router.get("/report/:id", submission.findOne);
-  router.post("/report/register", submission.create);
-  router.put("/report/register/:id", submission.update);
-  router.delete("/report/:id", submission.delete);
-  router.delete("/report", submission.deleteAll);
+  router.get("/report/submit", submission.findAll);
+  router.get("/report/submit/:id", submission.findOne);
+  router.post("/report/submit/register", submission.create);
+  router.put("/report/submit/register/:id", submission.update);
+  router.delete("/report/submit/:id", submission.delete);
+  router.delete("/report/submit", submission.deleteAll);
 
   // 기본 경로 설정
   app.use('/api/submission', router);

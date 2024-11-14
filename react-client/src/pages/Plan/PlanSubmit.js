@@ -45,10 +45,13 @@ const PlanSubmit = () => {
     const handlePlanClick = (id) => {
         navigate(`/plan/submit/${id}`);
     };
-
+    // 수정 버튼 클릭 시 실행될 함수
+    const handleEditClick = (id) => {
+        navigate(`/plan/submit/register/${id}`);
+    };
     return (
         <>
-            <Title title="제안서 - 제출 버전 관리"/>
+            <Title title="기획서 - 제출 버전 관리"/>
             <Tabs />
 
             <>
@@ -87,9 +90,16 @@ const PlanSubmit = () => {
                                     <td>{plan.teamName}</td>                                    
                                     <td>{plan.member}</td>
                                     <td>{new Date(plan.createdAt).toLocaleDateString('ko-KR')}</td>
-                                    <td>
+                                    <td>                                    
+                                        <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() => handleEditClick(plan.id)}
+                                        >
+                                            수정
+                                        </button>
                                         <button
                                             className="btn btn-danger btn-sm"
+                                            style={{ marginLeft: '4px' }}
                                             onClick={() => deletePlan(plan.id)}
                                         >
                                             삭제

@@ -72,7 +72,6 @@ const Announcement = () => {
                             <tr>
                                 <th scope="col">번호</th>
                                 <th scope="col">제목</th>
-                                <th scope="col">내용</th>
                                 <th scope="col">작성자</th>
                                 <th scope="col">작성날짜</th>
                                 <th scope="col">수정날짜</th>
@@ -89,7 +88,6 @@ const Announcement = () => {
                                     >
                                         {announcement.title}
                                     </td>
-                                    <td>{announcement.content}</td>                                    
                                     <td>{announcement.createdBy}</td>
                                     <td>{new Date(announcement.createdAt).toLocaleDateString('ko-KR')}</td>
                                     <td>{new Date(announcement.updatedAt).toLocaleDateString('ko-KR')}</td>

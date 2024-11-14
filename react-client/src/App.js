@@ -97,11 +97,11 @@ class App extends Component {
                 <Route path="/report/:id" element={<ReportDetail />} />
                 <Route path="/report/register" element={<AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="sample" />} />
                 <Route path="/report/submit" element={<ReportSubmit />} />
-                <Route path="/report/submit/register" element={<AddProposal text="결과 보고서 - 제출 버전 관리" kind="version"/>} />
+                <Route path="/report/submit/register" element={<AddProposal text="결과 보고서 - 제출 버전 관리" kind="report"/>} />
                 <Route path="/report/submit/:id" element={<ReportSubmitDetail />} />                
                 {/* 결과 보고서 업데이트 */}
                 <Route path="/report/register/:id" element={<AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="sample" />} />
-                <Route path="/report/submit/register/:id" element={<AddProposal text="결과 보고서 - 제출 버전 관리" kind="version" />} />
+                <Route path="/report/submit/register/:id" element={<AddProposal text="결과 보고서 - 제출 버전 관리" kind="report" />} />
 
               {/* 결과 보고서 부분 종료 */}
               

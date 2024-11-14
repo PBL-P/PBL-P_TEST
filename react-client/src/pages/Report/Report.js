@@ -73,7 +73,6 @@ const Report = () => {
                             <tr>
                                 <th scope="col">번호</th>
                                 <th scope="col">제목</th>
-                                <th scope="col">내용</th>
                                 <th scope="col">작성날짜</th>
                                 <th scope="col">수정날짜</th>
                                 <th scope="col">작업</th>
@@ -89,7 +88,6 @@ const Report = () => {
                                     >
                                         {report.title}
                                     </td>
-                                    <td>{report.content}</td>                                    
                                     <td>{new Date(report.created_at).toLocaleDateString('ko-KR')}</td>
                                     <td>{new Date(report.updated_at).toLocaleDateString('ko-KR')}</td>
                                     <td>
