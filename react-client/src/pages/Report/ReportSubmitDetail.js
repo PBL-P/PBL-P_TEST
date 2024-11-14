@@ -53,6 +53,39 @@ const ReportSubmitDetail = () => {
                         </a>
                     </p>
                 )}
+                {fileNames[2] && filePaths[2] && (
+                    <p>
+                        <strong>시연 동영상:</strong>{" "}
+                        <a
+                            href={`http://localhost:8080/${filePaths[1]}`}
+                            download={fileNames[2]}
+                        >
+                            {fileNames[2]}
+                        </a>
+                    </p>
+                )}
+                {fileNames[3] && filePaths[3] && (
+                    <p>
+                        <strong>소스 프로그램:</strong>{" "}
+                        <a
+                            href={`http://localhost:8080/${filePaths[3]}`}
+                            download={fileNames[3]}
+                        >
+                            {fileNames[3]}
+                        </a>
+                    </p>
+                )}
+                {fileNames[4] && filePaths[4] && (
+                    <p>
+                        <strong>결과 보고서:</strong>{" "}
+                        <a
+                            href={`http://localhost:8080/${filePaths[4]}`}
+                            download={fileNames[4]}
+                        >
+                            {fileNames[4]}
+                        </a>
+                    </p>
+                )}
             </div>
         );
     };
