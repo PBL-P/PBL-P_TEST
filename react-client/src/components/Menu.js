@@ -9,7 +9,6 @@ import toggleButton from './data/toggleButton.png';
 
 const NavBox = styled.nav`
   width: ${(props) => (props.collapsed ? '60px' : '270px')};
-  height: 100vh;
   background-color: #00A8E8;
   background-image: url(${background});
   background-size: cover;

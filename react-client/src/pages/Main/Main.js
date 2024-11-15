@@ -48,7 +48,7 @@ const SectionBox = styled.div`
 const Main = () => {
   return (
     <>
-        <Title title="메인 페이지 - 프로젝트 개요" />
+        <Title title="" />
         <Tabs kind="main" />
         <MainContainer>
         <SectionBox>

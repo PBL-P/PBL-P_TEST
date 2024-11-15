@@ -21,5 +21,5 @@ export const mainTabs = [
   { name: '프로젝트 개요', route: ' ', count: 1 },
   { name: '프로젝트 좋은점', route: 'benefit', count: 1 },
   { name: '프로젝트 방법', route: 'method', count: 1 },
-  { name: '학습 동영상', route: 'video', count: 1 },
+  // { name: '학습 동영상', route: 'video', count: 1 },
 ];
