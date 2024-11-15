@@ -3,12 +3,14 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { tabs, mainTabs } from './data/menuData';
 
+
 const TabContainer = styled.div`
   margin: 0px 24px;
   display: flex;
   height: 81px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #e0e0e0;
+  /* border-bottom: 1px solid #e0e0e0; */
+  background-color: #ffffff;
 `;
 
 const TabItem = styled.div`

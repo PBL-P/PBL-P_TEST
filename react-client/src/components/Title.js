@@ -1,30 +1,46 @@
 import styled from "styled-components";
 import profileIcon from './data/profileIcon.png';
 
+const TotalBox = styled.div`
+  height: 120px;
+  position: fixed;
+  width: calc(100% - 270px);
+  top: 0; /* Aligns the element to the top of the viewport */  
+  background-color: #ffffff; /* Background to ensure visibility */
+`;
+
 const TitleBox = styled.div`
     /* border-bottom: 1px solid rgba(0,0,0,0.1); */
-    width: 100%;
+    width: calc(100% + 270px);
     padding: 24px;
     height: 120px;
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin: 0px 24px;
+    align-items: center;    
+    background-color: #ffffff;    
 `
 const IconImage = styled.img`
-    margin-right: 16px;
+    top: 42px;
+    position: fixed;
+    right: 16px;
     width: 44px;
-    height: 34px;
+    height: 34px;    
+
 `;
+const IconBox = styled.div`
+    
+`
+
 const Title = ({title}) => {
     return (
         <>
-        <TitleBox>
-            {/* <h1>{title}</h1> */}
-            <IconImage src={profileIcon} alt="Profile" />
-        
-        </TitleBox>
-        
+        <TotalBox>
+            <TitleBox>
+                {/* <h1>{title}</h1> */}
+                <IconBox>
+                <IconImage src={profileIcon} alt="Profile" />
+                </IconBox>
+            </TitleBox>
+        </TotalBox>
         </>
     );
   };
