@@ -3,28 +3,30 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { tabs, mainTabs } from './data/menuData';
 
+
 const TabContainer = styled.div`
-  padding: 0px 24px;
+  margin: 0px 24px;
   display: flex;
-  border-bottom: 1px solid #e0e0e0;
-  height: 60px;
+  height: 81px;
+  padding-bottom: 24px;
+  /* border-bottom: 1px solid #e0e0e0; */
+  background-color: #ffffff;
 `;
 
 const TabItem = styled.div`
   padding: 18px 20px;
+  height: 81px;
   cursor: pointer;
   border-bottom: 2px solid ${props => props.active ? '#1a73e8' : 'transparent'};
   color: ${props => props.active ? '#1a73e8' : '#000'};
   font-weight: ${props => props.active ? 'bold' : 'normal'};
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
 `;
 
-const Count = styled.span`
-  background-color: #e0e0e0;
-  border-radius: 10px;
-  padding: 2px 6px;
-  font-size: 0.8em;
-  margin-left: 5px;
-`;
 
 const Tabs = ({ kind = '' }) => {
   const navigate = useNavigate();
@@ -63,7 +65,7 @@ const Tabs = ({ kind = '' }) => {
           active={activeTab === tab.name}
           onClick={() => handleTabClick(tab)}
         >
-          {tab.name} <Count>{tab.count.toString().padStart(2, '0')}</Count>
+          {tab.name}
         </TabItem>
       ))}
     </TabContainer>

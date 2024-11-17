@@ -144,7 +144,7 @@ const AddProposal = ({ text, kind }) => {
 
   return (
     <>
-      <Title title={text} />
+      <Title kind="form" />
       <div className="submit-form">
         {submitted ? (
           <div>
