@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import { Routes, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Menu from "./components/Menu";
 import AddProposal from "./components/add-proposal.component";
 import Content from "./components/Content";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import GlobalStyle from './GlobalStyles';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import GlobalStyle from "./GlobalStyles";
 
 import Main from "./pages/Main/Main";
 import Benefit from "./pages/Main/Benefit";
@@ -38,18 +38,23 @@ import Announcement from "./pages/Announcement/Announcement";
 import AddAnnouncement from "./pages/Announcement/AddAnnouncement";
 import AnnouncementDetail from "./pages/Announcement/AnnouncementDetail";
 
+import Login from "./pages/Login/Login";
 
-class App extends Component {
-  render() {
-    return (
-      <>
-        <GlobalStyle />
-        <div style={{ display: 'flex' }}>
-          <Menu />
-          <Content>
+const App = () => {
+  const location = useLocation();
+  const showMenu = location.pathname !== "/"; // '/' 경로에서는 Menu 숨기기
+
+  return (
+    <>
+      <GlobalStyle />
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+      <div style={{ display: "flex" }}>
+        {showMenu && <Menu />}
+        <Content>
             {/* Routes는 Router로 감싸져 있으므로 바로 사용 가능 */}
             <Routes>
-              <Route path="/" element={<Main />}/>
               <Route path="/main" element={<Main />}/>
               <Route path="/main/benefit" element={<Benefit />}/>
               <Route path="/main/method" element={<Method />}/>
@@ -117,10 +122,9 @@ class App extends Component {
               
             </Routes>
           </Content>
-        </div>
-      </>
-    );
-  }
-}
+      </div>
+    </>
+  );
+};
 
 export default App;
