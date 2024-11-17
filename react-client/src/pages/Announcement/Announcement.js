@@ -99,6 +99,26 @@ const SearchIcon = styled.i`
   font-size: 16px;
 `;
 
+const StickyButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  background-color: #009EFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #007acc;
+  }
+`;
+
 const Announcement = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -136,6 +156,10 @@ const Announcement = () => {
 
   const handleClick = (id) => {
     navigate(`/announcement/${id}`);
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/announcement/register");
   };
 
   return (
@@ -181,6 +205,7 @@ const Announcement = () => {
             </Table>
           </TableWrapper>
         </TablesContainer>
+        <StickyButton onClick={handleRegisterClick}>등록하기</StickyButton>
       </PageContainer>
     </>
   );

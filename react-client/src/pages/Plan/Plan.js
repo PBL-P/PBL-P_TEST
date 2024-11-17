@@ -52,7 +52,25 @@ const TableHeader = styled.div`
   margin-bottom: 10px;
   font-weight: bold;
 `;
+const StickyButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  background-color: #009EFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
 
+  &:hover {
+    background-color: #007acc;
+  }
+`; 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -153,7 +171,9 @@ const Plan = () => {
   const handleSubmissionClick = (id) => {
     navigate(`/plan/submit/${id}`);
   };
-
+  const handleRegisterClick = () => {
+    navigate("/plan/submit/register");
+  };
   return (
     <>
       <Title kind="form"/>
@@ -167,15 +187,34 @@ const Plan = () => {
           <TableWrapper>
             <TableHeader>
               <span>총: {filteredInstructionPlans.length}개</span>
-              <SearchContainer>
-                <SearchIcon className="fa fa-search" />
-                <StyledSearchInput
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <SearchContainer>
+                  <SearchIcon className="fa fa-search" />
+                  <StyledSearchInput
                     type="text"
                     placeholder="검색"
                     value={instructionSearchQuery}
                     onChange={handleInstructionSearch}
-                />
-              </SearchContainer>
+                  />
+                </SearchContainer>
+                <button
+                  onClick={() => navigate("/plan/register")}
+                  style={{
+                    backgroundColor: "#009EFF",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    padding: "10px 12px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <i className="fa fa-plus" style={{ fontSize: "16px" }} />
+                </button>
+              </div>
             </TableHeader>
             <Table>
               <thead>
@@ -235,6 +274,7 @@ const Plan = () => {
             </Table>
           </TableWrapper>
         </TablesContainer>
+        <StickyButton onClick={handleRegisterClick}>제출하기</StickyButton>
       </PageContainer>
     </>
   );
