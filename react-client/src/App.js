@@ -15,7 +15,6 @@ import Method from "./pages/Main/Method";
 import Video from "./pages/Main/VideoComponent";
 
 import Proposal from "./pages/Proposal/Proposal";
-import ProposalSubmit from "./pages/Proposal/ProposalSubmit";
 import ProposalDetail from "./pages/Proposal/ProposalDetail";
 import ProposalSubmitDetail from "./pages/Proposal/ProposalSubmitDetail";
 
@@ -63,7 +62,6 @@ const App = () => {
                 <Route path="/proposal" element={<Proposal />} />
                 <Route path="/proposal/:id" element={<ProposalDetail />} />
                 <Route path="/proposal/register" element={<AddProposal text="제안서 - 작성 방법 및 예시" kind="sample" />} />
-                <Route path="/proposal/submit" element={<ProposalSubmit />} />
                 <Route path="/proposal/submit/register" element={<AddProposal text="제안서 - 제출 버전 관리" kind="version"/>} />
                 <Route path="/proposal/submit/:id" element={<ProposalSubmitDetail />} />                
                 {/* 제안서 업데이트 */}

@@ -90,6 +90,8 @@ const ToggleBox = styled.div`
 
 const ToggleButton = styled.button`
   margin-right: ${(props) => (props.collapsed ? '0px' : '24px')};
+  margin-top: ${(props) => (props.collapsed ? '10px' : '0px')};;
+  margin-bottom: ${(props) => (props.collapsed ? '10px' : '0px')};;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -99,6 +101,7 @@ const ToggleButton = styled.button`
 const IconImage = styled.img`
   width: 40px;
   height: 40px;
+  
 `;
 
 const Menu = () => {
