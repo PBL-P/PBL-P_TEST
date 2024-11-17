@@ -22,6 +22,7 @@ const Divider = styled.hr`
   border: 0;
   height: 1px;
   background: #ddd;
+  margin: 0 20px;
 `;
 
 const FormGroup = styled.div`
