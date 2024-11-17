@@ -1,8 +1,99 @@
 import React, { useState, useEffect } from "react";
 import ProposalDataService from "../services/proposal.service";
 import Title from "./Title";
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import styled from "styled-components";
+
+// Styled-components 정의
+const FormContainer = styled.div`
+  margin: 89px auto;
+  border-radius: 8px;
+  max-width: 600px;
+`;
+
+const FormHeader = styled.h2`
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+`;
+
+const Divider = styled.hr`
+  border: 0;
+  height: 1px;
+  background: #ddd;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  margin-bottom: 15px;
+
+  label {
+    width: 100px;
+    margin-top: 2px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  textarea,
+  input[type="file"] {
+    flex: 1; /* 남은 공간을 차지 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    resize: vertical;
+    height: 200px;
+  }
+`;
+
+const FormFile = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+
+  label {
+    width: 100px; /* 제목의 고정 너비 */
+    margin-right: 10px;
+    font-weight: bold;
+  }
+`;
+
+const SuccessMessage = styled.h4`
+  color: #155724;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end; /* 오른쪽으로 정렬 */
+  margin-top: 10px;
+`;
+
+const Button = styled.button`
+  display: flex;
+  padding: 10px 15px;
+  margin-top: 10px;
+  color: white;
+  background-color: ${(props) =>
+    props.variant === "success" ? "#28a745" : "#007bff"};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.variant === "success" ? "#218838" : "#0056b3"};
+  }
+`;
 
 const AddProposal = ({ text, kind }) => {
   const { id } = useParams();
@@ -18,7 +109,10 @@ const AddProposal = ({ text, kind }) => {
   const [demoVideo, setDemoVideo] = useState(null); // 시연 동영상
   const [sourceFile, setSourceFile] = useState(null); // 소스 프로그램 파일
   const [reportFile, setReportFile] = useState(null); // 결과 보고서 파일
-  const [existingFiles, setExistingFiles] = useState({ fileName: null, filePath: null });
+  const [existingFiles, setExistingFiles] = useState({
+    fileName: null,
+    filePath: null,
+  });
   const [submitted, setSubmitted] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
@@ -41,9 +135,10 @@ const AddProposal = ({ text, kind }) => {
 
   useEffect(() => {
     if (id) {
-      const fetchData = kind === "sample" ? ProposalDataService.get : ProposalDataService.s_get;
+      const fetchData =
+        kind === "sample" ? ProposalDataService.get : ProposalDataService.s_get;
       fetchData(id)
-        .then(response => {
+        .then((response) => {
           const data = response.data;
           setTitle(data.title);
           setContent(data.content || "");
@@ -55,10 +150,10 @@ const AddProposal = ({ text, kind }) => {
           const filePaths = data.file_path ? data.file_path.split("|") : [];
           setExistingFiles({
             fileName: fileNames,
-            filePath: filePaths
+            filePath: filePaths,
           });
         })
-        .catch(e => console.log(e));
+        .catch((e) => console.log(e));
     }
   }, [id, kind]);
 
@@ -66,7 +161,7 @@ const AddProposal = ({ text, kind }) => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("document_type_id", getDocumentKey());
-  
+
     if (kind === "sample") {
       formData.append("content", content);
     } else if (kind === "version" || kind === "report") {
@@ -74,11 +169,11 @@ const AddProposal = ({ text, kind }) => {
       formData.append("member", member);
       formData.append("thought", thought);
     }
-  
+
     // 고정된 순서로 파일명을 배열에 배치: 발표자료, 발표 동영상, 시연 동영상, 소스 프로그램, 결과 보고서
     const fileNames = ["", "", "", "", ""];
     const filePaths = ["", "", "", "", ""];
-  
+
     // 각 파일을 해당 인덱스에 배치합니다.
     if (presentationFile) {
       formData.append("presentationFile", presentationFile);
@@ -105,34 +200,37 @@ const AddProposal = ({ text, kind }) => {
       fileNames[4] = reportFile.name;
       filePaths[4] = "uploads/" + reportFile.name;
     }
-  
+
     // 구분자로 연결한 파일명 및 경로 추가
     formData.append("file_name", fileNames.join("|"));
     formData.append("file_path", filePaths.join("|"));
-  
+
     // formData 내용을 console.log로 출력
     console.log("FormData contents:");
     for (let [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
-  
-    const saveFunction = kind === "sample"
-      ? (id ? ProposalDataService.update : ProposalDataService.create)
-      : (id ? ProposalDataService.s_update : ProposalDataService.s_create);
-  
+
+    const saveFunction =
+      kind === "sample"
+        ? id
+          ? ProposalDataService.update
+          : ProposalDataService.create
+        : id
+        ? ProposalDataService.s_update
+        : ProposalDataService.s_create;
+
     const request = id ? saveFunction(id, formData) : saveFunction(formData);
-  
+
     request
-      .then(response => {
+      .then((response) => {
         setSubmitted(true);
         console.log("Response:", response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.error("Error:", e.response ? e.response.data : e.message);
       });
   };
-  
-  
 
   const newProposal = () => {
     setRedirect(true);
@@ -145,159 +243,160 @@ const AddProposal = ({ text, kind }) => {
   return (
     <>
       <Title kind="form" />
-      <div className="submit-form">
+      {kind === "sample" && <FormHeader>강의 자료 등록</FormHeader>}
+      {(kind === "version" || kind === "report") && (
+        <FormHeader>과제 제출</FormHeader>
+      )}
+      <Divider />
+      <FormContainer>
         {submitted ? (
           <div>
-            <h4>정상적으로 제출되었습니다!</h4>
-            <button className="btn btn-success" onClick={newProposal}>
+            <SuccessMessage>정상적으로 제출되었습니다!</SuccessMessage>
+            <Button variant="primary" onClick={newProposal}>
               목록으로
-            </button>
+            </Button>
           </div>
         ) : (
           <>
-            <div className="form-group">
+            <FormGroup>
               <label htmlFor="title">제목</label>
               <input
                 type="text"
-                className="form-control"
                 id="title"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 name="title"
+                placeholder="최대 20자 입력"
+                maxlength="20"
               />
-            </div>
+            </FormGroup>
 
             {kind === "sample" && (
               <>
-              <div className="form-group">
-                <label htmlFor="content">내용</label>
-                <textarea
-                  className="form-control"
-                  id="content"
-                  required
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  name="content"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="presentationFile">첨부 자료</label>
-                <input
-                  type="file"
-                  className="form-control-file"
-                  id="presentationFile"
-                  onChange={(e) => setPresentationFile(e.target.files[0])}
-                  name="presentationFile"
-                />
-              </div>
+                <FormGroup>
+                  <label htmlFor="content">내용</label>
+                  <textarea
+                    id="content"
+                    required
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    name="content"
+                    placeholder="최대 500자 입력"
+                    maxlength="500"
+                  />
+                </FormGroup>
+                <FormFile>
+                  <label htmlFor="presentationFile">파일 첨부</label>
+                  <input
+                    type="file"
+                    id="presentationFile"
+                    onChange={(e) => setPresentationFile(e.target.files[0])}
+                    name="presentationFile"
+                  />
+                </FormFile>
               </>
             )}
 
             {(kind === "version" || kind === "report") && (
               <>
-                <div className="form-group">
+                <FormGroup>
                   <label htmlFor="teamName">팀명</label>
                   <input
                     type="text"
-                    className="form-control"
                     id="teamName"
                     required
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                     name="teamName"
                   />
-                </div>
-                <div className="form-group">
+                </FormGroup>
+                <FormGroup>
                   <label htmlFor="member">팀원</label>
                   <input
                     type="text"
-                    className="form-control"
                     id="member"
                     required
                     value={member}
                     onChange={(e) => setMember(e.target.value)}
                     name="member"
                   />
-                </div>
-                <div className="form-group">
+                </FormGroup>
+                <FormGroup>
                   <label htmlFor="thought">소감문</label>
                   <textarea
-                    className="form-control"
                     id="thought"
                     required
                     value={thought}
                     onChange={(e) => setThought(e.target.value)}
                     name="thought"
+                    placeholder="최대 500자 입력"
+                    maxlength="500"
                   />
-                </div>
-                <div className="form-group">
+                </FormGroup>
+                <FormFile>
                   <label htmlFor="presentationFile">발표 자료</label>
                   <input
                     type="file"
-                    className="form-control-file"
                     id="presentationFile"
                     onChange={(e) => setPresentationFile(e.target.files[0])}
                     name="presentationFile"
                   />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="videoFile">발표 동영상 (선택사항)</label>
+                </FormFile>
+                <FormFile>
+                  <label htmlFor="videoFile">
+                    발표 동영상 <br />
+                    (선택사항)
+                  </label>
                   <input
                     type="file"
-                    className="form-control-file"
                     id="videoFile"
                     onChange={(e) => setVideoFile(e.target.files[0])}
                     name="videoFile"
                   />
-                </div>
+                </FormFile>
               </>
             )}
 
             {kind === "report" && (
-              <>                
-                <div className="form-group">
+              <>
+                <FormFile>
                   <label htmlFor="demoVideo">시연 동영상</label>
                   <input
                     type="file"
-                    className="form-control-file"
                     id="demoVideo"
                     onChange={(e) => setDemoVideo(e.target.files[0])}
                     name="demoVideo"
                   />
-                </div>
-                <div className="form-group">
+                </FormFile>
+                <FormFile>
                   <label htmlFor="sourceFile">소스 프로그램</label>
                   <input
                     type="file"
-                    className="form-control-file"
                     id="sourceFile"
                     onChange={(e) => setSourceFile(e.target.files[0])}
                     name="sourceFile"
                   />
-                </div>
-                <div className="form-group">
+                </FormFile>
+                <FormFile>
                   <label htmlFor="reportFile">결과 보고서</label>
                   <input
                     type="file"
-                    className="form-control-file"
                     id="reportFile"
                     onChange={(e) => setReportFile(e.target.files[0])}
                     name="reportFile"
                   />
-                </div>
+                </FormFile>
               </>
             )}
-
-
-
-            <button onClick={saveProposal} className="btn btn-success">
-              {id ? "수정하기" : "등록하기"}
-            </button>
+            <ButtonWrapper>
+              <Button variant="success" onClick={saveProposal}>
+                {id ? "수정하기" : "등록하기"}
+              </Button>
+            </ButtonWrapper>
           </>
         )}
-      </div>
+      </FormContainer>
     </>
   );
 };
