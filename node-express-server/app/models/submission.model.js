@@ -23,9 +23,11 @@ module.exports = (sequelize, Sequelize) => {
     },
     fileName: {
       type: Sequelize.STRING,
+      allowNull: true,
     },
     filePath: {
       type: Sequelize.STRING,
+      allowNull: true,
     },
   }, {
     timestamps: true,
