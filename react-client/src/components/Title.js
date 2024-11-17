@@ -3,47 +3,43 @@ import profileIcon from './data/profileIcon.png';
 
 const TotalBox = styled.div`
   height: 120px;
-  position: fixed;
   width: calc(100% - 270px);
-  top: 0; /* Aligns the element to the top of the viewport */  
+  top: 0; /* Aligns the element to the top of the viewport */
   background-color: #ffffff; /* Background to ensure visibility */
+  position: ${({ isFixed }) => (isFixed ? 'fixed' : 'static')}; /* 조건에 따라 position 설정 */
 `;
 
 const TitleBox = styled.div`
-    /* border-bottom: 1px solid rgba(0,0,0,0.1); */
-    width: calc(100% + 270px);
-    padding: 24px;
-    height: 120px;
-    display: flex;
-    align-items: center;    
-    background-color: #ffffff;    
-`
-const IconImage = styled.img`
-    top: 42px;
-    position: fixed;
-    right: 16px;
-    width: 44px;
-    height: 34px;    
-
+  width: calc(100% + 270px);
+  padding: 24px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
 `;
-const IconBox = styled.div`
-    
-`
 
-const Title = ({title}) => {
-    return (
-        <>
-        <TotalBox>
-            <TitleBox>
-                {/* <h1>{title}</h1> */}
-                <IconBox>
-                <IconImage src={profileIcon} alt="Profile" />
-                </IconBox>
-            </TitleBox>
-        </TotalBox>
-        </>
-    );
-  };
-  
-  export default Title;
-  
+const IconImage = styled.img`
+  top: 42px;
+  position: fixed;
+  right: 16px;
+  width: 44px;
+  height: 34px;
+`;
+
+const IconBox = styled.div``;
+
+const Title = ({ kind }) => {
+  const isFixed = kind !== "form"; // kind가 "form"이 아니면 fixed 적용
+
+  return (
+    <TotalBox isFixed={isFixed}>
+      <TitleBox>
+        <IconBox>
+          <IconImage src={profileIcon} alt="Profile" />
+        </IconBox>
+      </TitleBox>
+    </TotalBox>
+  );
+};
+
+export default Title;
