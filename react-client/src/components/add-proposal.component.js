@@ -165,48 +165,35 @@ const AddProposal = ({ text, kind }) => {
 
     if (kind === "sample") {
       formData.append("content", content);
+
+      // 강의 자료는 단일 파일 처리
+      if (presentationFile) {
+        formData.append("file", presentationFile); // 'file' 키로 전송
+      }
     } else if (kind === "version" || kind === "report") {
       formData.append("teamName", teamName);
       formData.append("member", member);
       formData.append("thought", thought);
+
+      // 제출 부분은 다중 파일 처리
+      if (presentationFile) {
+        formData.append("files", presentationFile);
+      }
+      if (videoFile) {
+        formData.append("files", videoFile);
+      }
+      if (demoVideo) {
+        formData.append("files", demoVideo);
+      }
+      if (sourceFile) {
+        formData.append("files", sourceFile);
+      }
+      if (reportFile) {
+        formData.append("files", reportFile);
+      }
     }
 
-    // 고정된 순서로 파일명을 배열에 배치: 발표자료, 발표 동영상, 시연 동영상, 소스 프로그램, 결과 보고서
-    const fileNames = ["", "", "", "", ""];
-    const filePaths = ["", "", "", "", ""];
-
-    // 각 파일을 해당 인덱스에 배치합니다.
-    if (presentationFile) {
-      formData.append("presentationFile", presentationFile);
-      fileNames[0] = presentationFile.name;
-      filePaths[0] = "uploads/" + presentationFile.name;
-    }
-    if (videoFile) {
-      formData.append("videoFile", videoFile);
-      fileNames[1] = videoFile.name;
-      filePaths[1] = "uploads/" + videoFile.name;
-    }
-    if (demoVideo) {
-      formData.append("demoVideo", demoVideo);
-      fileNames[2] = demoVideo.name;
-      filePaths[2] = "uploads/" + demoVideo.name;
-    }
-    if (sourceFile) {
-      formData.append("sourceFile", sourceFile);
-      fileNames[3] = sourceFile.name;
-      filePaths[3] = "uploads/" + sourceFile.name;
-    }
-    if (reportFile) {
-      formData.append("reportFile", reportFile);
-      fileNames[4] = reportFile.name;
-      filePaths[4] = "uploads/" + reportFile.name;
-    }
-
-    // 구분자로 연결한 파일명 및 경로 추가
-    formData.append("file_name", fileNames.join("|"));
-    formData.append("file_path", filePaths.join("|"));
-
-    // formData 내용을 console.log로 출력
+    // formData 디버깅
     console.log("FormData contents:");
     for (let [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
@@ -231,7 +218,7 @@ const AddProposal = ({ text, kind }) => {
       .catch((e) => {
         console.error("Error:", e.response ? e.response.data : e.message);
       });
-  };
+};
 
   const newProposal = () => {
     setRedirect(true);

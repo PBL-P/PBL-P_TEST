@@ -22,23 +22,25 @@ const upload = multer({ storage: storage });
 // Create and Save a new Submission
 exports.create = [upload.array('files', 5), async (req, res) => {
   try {
+    console.log("Request files:", req.files); // 파일 로그 확인
+    console.log("Request body:", req.body); // 요청 바디 확인
+
     // 파일명과 경로를 |로 구분하여 하나의 문자열로 저장
-    const fileNames = req.files.map(file => Buffer.from(file.originalname, 'latin1').toString('utf8')).join('|');
+    const fileNames = req.files.map(file => file.originalname).join('|');
     const filePaths = req.files.map(file => file.path).join('|');
 
     const submission = {
-      document_type_id: req.body.document_type_id || 1,
+      document_type_id: req.body.document_type_id, // 문자열 타입 유지
       title: req.body.title,
       teamName: req.body.teamName,
       member: req.body.member,
       thought: req.body.thought,
-      fileName: fileNames, // 다중 파일 이름
-      filePath: filePaths  // 다중 파일 경로
+      fileName: fileNames || null, // 파일 이름
+      filePath: filePaths || null  // 파일 경로
     };
 
-    // 데이터베이스에 새 제출물 저장
     const data = await Submission.create(submission);
-    return res.status(201).send(data);  // 성공 시 응답 반환
+    return res.status(201).send(data); // 성공 시 응답 반환
   } catch (err) {
     console.error("Error during submission creation:", err.message);
     return res.status(500).send({
