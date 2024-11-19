@@ -21,6 +21,7 @@ db.sequelize = sequelize;
 
 db.user = require("./user.model.js")(sequelize, Sequelize); // 여기에 추가
 db.instruction = require("./instruction.model.js")(sequelize, Sequelize);
+db.example = require("./example.model.js")(sequelize, Sequelize); // 추가
 db.submission = require("./submission.model.js")(sequelize, Sequelize);
 
 // index.js 파일에서 announcement 모델을 정의하지 않았언 ㅠㅠ
