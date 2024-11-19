@@ -1,0 +1,213 @@
+/* 기본 스타일 */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f9f9f9;
+  height: 100vh;
+  overflow: hidden; /* 스크롤 비활성화 */
+}
+
+h3 {
+  font-size: 30px !important; /* 글씨 크기 */
+  font-weight: bold !important; /* 글씨 굵게 */
+  text-align: center !important; /* 가운데 정렬 */
+  margin-bottom: 20px; /* 아래 여백 */
+}
+
+h4 {
+  font-size: 18px; /* 표 안의 글씨 크기 */
+  font-weight: bold; /* 글씨 굵게 */
+  margin: 10px 0; /* 적절한 위아래 여백 */
+  color: #333; /* 기본 글씨 색상 */
+}
+
+.plan-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* 메인 컨테이너 */
+.login-container {
+  display: flex;
+  height: 100vh;
+  min-height: 600px; /* 최소 높이 설정 */
+}
+
+/* 왼쪽 패널 */
+.left-panel {
+  flex: 0 0 25%; /* 비율: 25% */
+  background: url('./main_image.png') no-repeat center center; /* 이미지 설정 */
+  background-size: cover; /* 이미지가 여백 없이 채워지도록 설정 */
+  min-width: 300px; /* 최소 너비 설정 */
+  height: 100%; /* 패널 높이를 100%로 설정 */
+  overflow: hidden; /* 초과된 이미지 잘림 */
+}
+
+/* 가운데 로그인 폼 */
+.middle-panel {
+  flex: 0 0 30%; /* 비율: 30% */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+  min-width: 300px;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* PBL 박스 */
+.pbl-box {
+  display: inline-block;
+  background-color: #d5d9dc;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* 폼 요소 */
+.form-group {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login-button {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+/* 링크 스타일 */
+.links {
+  margin-top: 10px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.links a:first-child {
+  color: #000;
+}
+
+.links a:last-child {
+  color: red;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+/* 오른쪽 패널 */
+.right-panel {
+  flex: 0 0 45%; /* 비율: 45% */
+  padding: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+  height: 100%;
+  min-width: 300px;
+}
+
+/* 표 스타일 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 14px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table th {
+  background-color: #5b9de3;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+table td {
+  background-color: #d8d6d6;
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+table td:first-child {
+  font-weight: bold;
+  background-color: #f0f4f8;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .left-panel,
+  .right-panel {
+    display: none; /* 왼쪽 패널과 오른쪽 패널 숨김 */
+  }
+
+  .middle-panel {
+    flex: 1 1 100%; /* 전체 너비 차지 */
+    padding: 20px;
+  }
+
+  .login-container {
+    height: 100vh; /* 로그인 섹션만 표시 */
+  }
+
+  .login-button {
+    padding: 10px;
+    font-size: 14px; /* 작은 화면에서 폰트 축소 */
+  }
+
+  table {
+    font-size: 12px; /* 작은 화면에서 글씨 축소 */
+  }
+}
