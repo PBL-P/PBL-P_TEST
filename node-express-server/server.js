@@ -38,6 +38,9 @@ require('./app/routes/submission.routes.js')(app);
 require('./app/routes/instruction.routes.js')(app);
 require('./app/routes/announcement.routes.js')(app);
 
+// 인증 관련 라우터 추가
+const authRoutes = require('./app/routes/auth.routes.js'); // 라우터 가져오기
+app.use('/api/auth', authRoutes); // app.use로 등록
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
