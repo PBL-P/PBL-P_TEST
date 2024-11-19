@@ -37,12 +37,11 @@ h4 {
 
 /* 왼쪽 패널 */
 .left-panel {
-  flex: 0 0 25%; /* 비율: 25% */
-  background: url('./main_image.png') no-repeat center center; /* 이미지 설정 */
-  background-size: cover; /* 이미지가 여백 없이 채워지도록 설정 */
+  flex: 0 0 25%; /* 패널의 너비를 25%로 설정 */
+  
   min-width: 300px; /* 최소 너비 설정 */
-  height: 100%; /* 패널 높이를 100%로 설정 */
-  overflow: hidden; /* 초과된 이미지 잘림 */
+  height: 100vh; /* 화면 높이에 맞게 설정 */
+  max-height: 100%; /* 부모 요소를 넘지 않도록 설정 */
 }
 
 /* 가운데 로그인 폼 */
@@ -51,14 +50,13 @@ h4 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   background-color: #f9f9f9;
   padding: 40px 20px;
   min-width: 300px;
 }
 
 .logo {
-  width: 180px;
+  width: 200px;
   margin-bottom: 20px;
   display: block;
 }
@@ -190,8 +188,9 @@ table td:first-child {
 @media (max-width: 768px) {
   .left-panel,
   .right-panel {
-    display: none; /* 왼쪽 패널과 오른쪽 패널 숨김 */
+    display: none; /* 작은 화면에서는 왼쪽 패널 숨기기 */
   }
+
 
   .middle-panel {
     flex: 1 1 100%; /* 전체 너비 차지 */
