@@ -19,6 +19,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.user = require("./user.model.js")(sequelize, Sequelize); // 여기에 추가
 db.instruction = require("./instruction.model.js")(sequelize, Sequelize);
 db.submission = require("./submission.model.js")(sequelize, Sequelize);
 
