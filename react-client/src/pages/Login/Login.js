@@ -1,85 +1,241 @@
 import React from "react";
-import "./login.css"; // CSS 파일 import
-import mainImage from "./main_image.png"; // 배경 이미지 파일 import
-import logo from "./jeju_logo.png"; // 제주대학교 로고 파일 import
+import styled from "styled-components";
+import mainImage from "./main_image.png";
+import logo from "./jeju_logo.png";
 import text from "./text.png";
 
+// Styled Components
+const LoginContainer = styled.div`
+  display: flex;
+  height: 100vh;
+  max-height: 100vh;
+  min-height: 600px;
+`;
+
+const LeftPanel = styled.div`
+  flex: 0 0 25%;
+  background: url(${mainImage}) no-repeat center center;
+  background-size: cover;
+  min-width: 300px;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const MiddlePanel = styled.div`
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+  min-width: 300px;
+`;
+
+const Logo = styled.img`
+  width: 180px;
+  margin-bottom: 20px;
+  display: block;
+`;
+
+const PBLBox = styled.div`
+  display: inline-block;
+  background-color: #d5d9dc;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+`;
+
+const FormGroup = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+`;
+
+const Label = styled.label`
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  display: block;
+  margin-bottom: 5px;
+`;
+
+const FormInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+`;
+
+const LoginButton = styled.button`
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const Links = styled.div`
+  margin-top: 10px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    text-decoration: none;
+    font-weight: bold;
+
+    &:first-child {
+      color: #000;
+    }
+
+    &:last-child {
+      color: red;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const RightPanel = styled.div`
+  flex: 0 0 45%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+  height: 100%;
+  min-width: 300px;
+`;
+
+const Heading = styled.h3`
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const SubHeading = styled.h4`
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 14px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  th {
+    background-color: #5b9de3;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+
+  td {
+    background-color: #d8d6d6;
+    text-align: left;
+    border: 1px solid #ddd;
+    padding: 8px;
+
+    &:first-child {
+      font-weight: bold;
+      background-color: #f0f4f8;
+    }
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+`;
+
+const PlanIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  vertical-align: middle;
+`;
+
+// Component
 const Login = () => {
   return (
-    <div className="login-container">
+    <LoginContainer>
       {/* 왼쪽 패널 */}
-      <div className="left-panel">
-        <img src={mainImage} alt="배경" className="background-image" />
-      </div>
+      <LeftPanel />
+
+      {/* 가운데 로그인 폼 */}
+      <MiddlePanel>
+        <Logo src={logo} alt="제주대학교 로고" />
+        <PBLBox>PBL - P 시스템</PBLBox>
+        <form>
+          <FormGroup>
+            <Label htmlFor="student-id">아이디(학번)</Label>
+            <FormInput type="text" id="student-id" placeholder="학번을 입력하세요" />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">비밀번호</Label>
+            <FormInput type="password" id="password" placeholder="비밀번호를 입력하세요" />
+          </FormGroup>
+          <LoginButton type="submit">로그인</LoginButton>
+          <Links>
+            <a href="#">아이디(학번) 찾기</a>
+            <a href="#">비밀번호 찾기</a>
+          </Links>
+        </form>
+      </MiddlePanel>
 
       {/* 오른쪽 패널 */}
-      <div className="middle-panel">
-        <div className="login-box">
-          <img src={logo} alt="제주대학교 로고" className="logo" />
-          <div class="pbl-box">PBL - P 시스템</div>
-          <form>
-            <div className="form-group">
-              <label htmlFor="student-id">아이디(학번)</label>
-              <input
-                type="text"
-                id="student-id"
-                placeholder="학번을 입력하세요"
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">비밀번호</label>
-              <input
-                type="password"
-                id="password"
-                placeholder="비밀번호를 입력하세요"
-                className="form-input"
-              />
-            </div>
-            <div className="button-group">
-              <button type="submit" className="login-button">
-                로그인
-              </button>
-              <div className="links">
-                <a href="#">아이디(학번) 찾기</a> {" "}
-                <a href="#">비밀번호 찾기</a>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* 세 번째 섹션 (교수 계획서) */}
-      <div className="right-panel">
-      <h3>
-      <img src={text} alt="문서 이미지" className="plan-icon" />
-      교수 계획서</h3>
-
-        {/* 강좌 및 담당 교수 */}
-        <h4>1. 강좌 및 담당 교수</h4>
-        <table class="course-info-table">
-  <tr>
-    <th>수강번호</th>
-    <td>466306</td>
-    <th>교과목명</th>
-    <td>SW융합캡스톤디자인 I</td>
-  </tr>
-  <tr>
-    <th>담당교수</th>
-    <td>김도현</td>
-    <th>이메일</th>
-    <td>kimdh@jejunu.ac.kr</td>
-  </tr>
-  <tr>
-    <th>시수/학점</th>
-    <td>2/2</td>
-    <th>연구실전화</th>
-    <td>064-754-3658</td>
-  </tr>
-</table>
-
+      <RightPanel>
+        <Heading>
+          <PlanIcon src={text} alt="문서 아이콘" />
+          교수 계획서
+        </Heading>
+        <SubHeading>1. 강좌 및 담당 교수</SubHeading>
+        <Table>
+          <tbody>
+            <tr>
+              <th>수강번호</th>
+              <td>466306</td>
+              <th>교과목명</th>
+              <td>SW융합캡스톤디자인 I</td>
+            </tr>
+            <tr>
+              <th>담당교수</th>
+              <td>김도현</td>
+              <th>이메일</th>
+              <td>kimdh@jejunu.ac.kr</td>
+            </tr>
+            <tr>
+              <th>시수/학점</th>
+              <td>2/2</td>
+              <th>연구실전화</th>
+              <td>064-754-3658</td>
+            </tr>
+          </tbody>
+        </Table>
         {/* 교과목 개요 */}
-        <h4>2. 교과목 개요</h4>
+        <SubHeading>2. 교과목 개요</SubHeading>
         <p>
           창의적인 개발 경험과 경쟁력 있는 IT 기술을 배양하기 위해
           PBL(Project Based Learning) 기반의 학습을 진행하고, 문제 SW 프로젝트
@@ -88,8 +244,8 @@ const Login = () => {
         </p>
 
         {/* 교육 목표 */}
-        <h4>3. 교육 목표</h4>
-        <table className="objective-table">
+        <SubHeading>3. 교육 목표</SubHeading>
+        <Table className="objective-table">
           <tbody>
             <tr>
               <td>1</td>
@@ -108,9 +264,9 @@ const Login = () => {
               <td>구현한 프로그램을 테스트하고 최종 보고서를 작성할 수 있는 능력을 배양한다.</td>
             </tr>
           </tbody>
-        </table>
-        <h4>4. 교수학습 방법(비율)</h4>
-        <table className="learning-method-table">
+        </Table>
+        <SubHeading>4. 교수학습 방법(비율)</SubHeading>
+        <Table className="learning-method-table">
           <thead>
             <tr>
               <th>이론강의</th>
@@ -143,10 +299,10 @@ const Login = () => {
               <td>100%</td>
             </tr>
           </tbody>
-        </table>
+        </Table>
         {/* 주차별 교수계획서 */}
-        <h4>5. 주차별 교수계획서</h4>
-        <table className="weekly-plan-table">
+        <SubHeading>5. 주차별 교수계획서</SubHeading>
+        <Table className="weekly-plan-table">
           <thead>
             <tr>
               <th>주차</th>
@@ -263,11 +419,11 @@ const Login = () => {
               <td></td>
             </tr>
           </tbody>
-        </table>
+        </Table>
 
         {/* 평가 방법 */}
-        <h4>6. 평가방법</h4>
-        <table className="evaluation-table">
+        <SubHeading>6. 평가방법</SubHeading>
+        <Table className="evaluation-table">
           <thead>
             <tr>
               <th>평가요소</th>
@@ -292,11 +448,11 @@ const Login = () => {
               <td>100</td>
             </tr>
           </tbody>
-        </table>
+        </Table>
 
         {/* 과제 */}
-        <h4>7. 과제</h4>
-        <table className="assignment-table">
+        <SubHeading>7. 과제</SubHeading>
+        <Table className="assignment-table">
           <thead>
             <tr>
               <th>상태</th>
@@ -313,18 +469,18 @@ const Login = () => {
               <td></td>
             </tr>
           </tbody>
-        </table>
+        </Table>
 
         {/* 기타 사항 */}
-        <h4>8. 기타 사항</h4>
+        <SubHeading>8. 기타 사항</SubHeading>
         <p>
           중간고사는 제안서 발표 및 평가로 진행될 예정입니다. <br />
           기말고사는 최종 결과 발표 및 보고서로 진행될 예정입니다.
         </p>
-
-        
-      </div>
-    </div>
+    
+    
+      </RightPanel>
+    </LoginContainer>
   );
 };
 
