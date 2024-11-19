@@ -2,7 +2,7 @@ module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define(
       "user",
       {
-        student_id: {
+        user_id: {
           type: Sequelize.STRING,
           unique: true,
           allowNull: false,

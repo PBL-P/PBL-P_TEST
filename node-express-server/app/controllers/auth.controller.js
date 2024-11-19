@@ -3,19 +3,19 @@ const User = db.user;
 
 // 회원가입
 exports.register = async (req, res) => {
-  const { student_id, password } = req.body;
+  const { user_id, password } = req.body;
 
-  if (!student_id || !password) {
-    return res.status(400).send({ message: "Student ID and Password are required!" });
+  if (!user_id || !password) {
+    return res.status(400).send({ message: "User ID and Password are required!" });
   }
 
   try {
     // 사용자 생성
-    const user = await User.create({ student_id, password });
+    const user = await User.create({ user_id, password });
     res.status(201).send({ message: "User registered successfully!", userId: user.id });
   } catch (err) {
     if (err.name === "SequelizeUniqueConstraintError") {
-      res.status(400).send({ message: "Student ID already exists!" });
+      res.status(400).send({ message: "User ID already exists!" });
     } else {
       res.status(500).send({ message: err.message });
     }
