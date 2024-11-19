@@ -1,122 +1,283 @@
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import Title from "../../components/Title";
-import Tabs from "../../components/Tabs";
-import { useNavigate } from 'react-router-dom';
 import PlanDataService from "../../services/plan.service";
+import { useNavigate } from 'react-router-dom';
+
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #ffffff;
+  max-height: 100vh;
+  overflow: hidden; /* 페이지 전체에서 스크롤 금지 */
+`;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;  
+`;
+
+const SectionTitle = styled.div`
+  font-size: 32px;
+  margin: 0px 18px;
+  padding: 10px 0;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+`;
+
+const TablesContainer = styled.div`
+  display: flex;
+  gap: 20px;
+  overflow-y: auto; /* 내부에서만 스크롤 허용 */
+  height: calc(100vh - 120px - 80px); /* 화면 높이에서 상단 마진 및 패딩 제외 */
+`;
+
+const TableWrapper = styled.div`
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  overflow-y: auto; /* 테이블 내부에서 스크롤 허용 */
+  max-height: 100%; /* 높이를 제한 */
+`;
+
+const TableHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+`;
+const StickyButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  background-color: #009EFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #007acc;
+  }
+`; 
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    height: 60px;
+  }
+
+  th {
+    /* Thead 스타일을 별도로 정의 가능 */
+    
+  }
+
+  /* Hover 효과 */
+  tr:not(.unset):hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+
+  thead tr:hover {
+    background-color: unset; /* Hover 효과 제거 */
+    cursor: default; /* 기본 커서 설정 */
+  }
+`;
+
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  gap: 8px; /* 아이콘과 인풋 간격 */
+`;
+
+const StyledSearchInput = styled.input`
+  border: none;
+  outline: none;
+  flex: 1;
+`;
+
+const SearchIcon = styled.i`
+  color: #888;
+  font-size: 16px;
+`;
 
 const Plan = () => {
-    const navigate = useNavigate();
-    const [plans, setPlans] = useState([]);
+  const [instructionPlans, setInstructionPlans] = useState([]);
+  const [submissionPlans, setSubmissionPlans] = useState([]);
+  const [instructionSearchQuery, setInstructionSearchQuery] = useState('');
+  const [submissionSearchQuery, setSubmissionSearchQuery] = useState('');
+  const navigate = useNavigate();
 
-    // 데이터를 가져오는 함수
-    const retrievePlans = () => {
-        PlanDataService.getAll()
-            .then(response => {
-                setPlans(response.data);
-                console.log(response.data);
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    };
+  const fetchInstructionPlans = () => {
+    PlanDataService.getAll()
+      .then(response => {
+        setInstructionPlans(response.data);
+      })
+      .catch(e => console.error(e));
+  };
 
-    useEffect(() => {
-        retrievePlans();
-    }, []);
-    
-    // 제안서 삭제 함수
-    const deletePlan = (id) => {
-        PlanDataService.delete(id)
-            .then(response => {
-                console.log(response.data);
-                setPlans(plans.filter(plan => plan.id !== id));
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    };
+  const fetchSubmissionPlans = () => {
+    PlanDataService.s_getAll()
+      .then(response => {
+        setSubmissionPlans(response.data);
+      })
+      .catch(e => console.error(e));
+  };
 
-    // 등록 버튼 클릭 시 실행될 함수
-    const handleRegisterClick = () => {
-        navigate("/plan/register");
-    };
+  useEffect(() => {
+    fetchInstructionPlans();
+    fetchSubmissionPlans();
+  }, []);
 
-    // 리스트 항목 클릭 시 상세 페이지로 이동
-    const handlePlanClick = (id) => {
-        navigate(`/plan/${id}`);
-    };
+  const handleInstructionSearch = (e) => {
+    setInstructionSearchQuery(e.target.value);
+  };
 
-    // 수정 버튼 클릭 시 실행될 함수
-    const handleEditClick = (id) => {
-        navigate(`/plan/register/${id}`);
-    };
+  const handleSubmissionSearch = (e) => {
+    setSubmissionSearchQuery(e.target.value);
+  };
 
-    return (
-        <>
-            <Title title="기획서 - 작성 방법 및 예시"/>
-            <Tabs />
+  const filteredInstructionPlans = instructionPlans.filter((plan) =>
+    plan.title.toLowerCase().includes(instructionSearchQuery.toLowerCase())
+  );
 
-            <>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems:"center", padding:"8px 24px", borderBottom:"1px solid rgba(0,0,0,0.1)"}}>
-                    <div>
-                        <span>총 : {plans.length}개</span>
-                    </div>
-                    <div>
-                        <input type="text" placeholder="Search..."/>
-                        <button>검색!</button>
-                    </div>
-                </div>
+  const filteredSubmissionPlans = submissionPlans.filter((plan) =>
+    plan.title.toLowerCase().includes(submissionSearchQuery.toLowerCase())
+  );
 
-                <div style={{padding: "4px 24px"}}>
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">번호</th>
-                                <th scope="col">제목</th>
-                                <th scope="col">작성날짜</th>
-                                <th scope="col">수정날짜</th>
-                                <th scope="col">작업</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {plans.map((plan, index) => (                                                             
-                                <tr key={index}>
-                                    <th scope="row">{index + 1}</th>
-                                    <td
-                                        style={{ cursor: 'pointer', color: '#007bff' }}
-                                        onClick={() => handlePlanClick(plan.id)}
-                                    >
-                                        {plan.title}
-                                    </td>
-                                    <td>{new Date(plan.created_at).toLocaleDateString('ko-KR')}</td>
-                                    <td>{new Date(plan.updated_at).toLocaleDateString('ko-KR')}</td>
-                                    <td>
-                                        <button
-                                            className="btn btn-primary btn-sm"
-                                            onClick={() => handleEditClick(plan.id)}
-                                        >
-                                            수정
-                                        </button>
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            style={{ marginLeft: '4px' }}
-                                            onClick={() => deletePlan(plan.id)}
-                                        >
-                                            삭제
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+  const handleInstructionClick = (id) => {
+    navigate(`/plan/${id}`);
+  };
 
-                    <div style={{textAlign:"right"}}>
-                        <button onClick={handleRegisterClick}>등록하기</button>
-                    </div>
-                </div>
-            </>
-        </>
-    );
-}
+  const handleSubmissionClick = (id) => {
+    navigate(`/plan/submit/${id}`);
+  };
+  const handleRegisterClick = () => {
+    navigate("/plan/submit/register");
+  };
+  return (
+    <>
+      <Title kind="form"/>
+      <PageContainer>
+        <HeaderContainer>
+          <SectionTitle>강의 자료</SectionTitle>
+          <SectionTitle>제출</SectionTitle>
+        </HeaderContainer>
+        <TablesContainer>
+          {/* 강의 자료 테이블 */}
+          <TableWrapper>
+            <TableHeader>
+              <span>총: {filteredInstructionPlans.length}개</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <SearchContainer>
+                  <SearchIcon className="fa fa-search" />
+                  <StyledSearchInput
+                    type="text"
+                    placeholder="검색"
+                    value={instructionSearchQuery}
+                    onChange={handleInstructionSearch}
+                  />
+                </SearchContainer>
+                <button
+                  onClick={() => navigate("/plan/register")}
+                  style={{
+                    backgroundColor: "#009EFF",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    padding: "10px 12px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <i className="fa fa-plus" style={{ fontSize: "16px" }} />
+                </button>
+              </div>
+            </TableHeader>
+            <Table>
+              <thead>
+                <tr class="unset">
+                  <th>번호</th>
+                  <th>제목</th>
+                  <th>작성 날짜</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredInstructionPlans.map((plan, index) => (
+                  <tr key={index} onClick={() => handleInstructionClick(plan.id)}>
+                    <td>{index + 1}</td>
+                    <td style={{ color: "#009EFF" }}>{plan.title}</td>
+                    <td>{new Date(plan.created_at).toLocaleDateString('ko-KR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrapper>
+
+          {/* 제출 데이터 테이블 */}
+          <TableWrapper>
+            <TableHeader>
+              <span>총: {filteredSubmissionPlans.length}개</span>
+              <SearchContainer>
+                <SearchIcon className="fa fa-search" />
+                <StyledSearchInput
+                    type="text"
+                    placeholder="검색"
+                    value={submissionSearchQuery}
+                    onChange={handleSubmissionSearch}
+                />
+              </SearchContainer>
+            </TableHeader>
+            <Table>
+              <thead>
+                <tr class="unset">
+                  <th>번호</th>
+                  <th>제목</th>
+                  <th>팀명</th>
+                  <th>팀원</th>
+                  <th>작성 날짜</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSubmissionPlans.map((plan, index) => (
+                  <tr key={index} onClick={() => handleSubmissionClick(plan.id)}>
+                    <td>{index + 1}</td>
+                    <td>{plan.title}</td>
+                    <td>{plan.teamName}</td>
+                    <td>{plan.member}</td>
+                    <td>{new Date(plan.createdAt).toLocaleDateString('ko-KR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrapper>
+        </TablesContainer>
+        <StickyButton onClick={handleRegisterClick}>제출하기</StickyButton>
+      </PageContainer>
+    </>
+  );
+};
 
 export default Plan;

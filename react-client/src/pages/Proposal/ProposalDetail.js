@@ -25,7 +25,7 @@ const ProposalDetail = () => {
 
     return (
         <>
-            <Title title="제안서 - 작성 방법 및 예시" />
+            <Title kind="form" />
             <div style={{ padding: '16px 24px' }}>
                 {proposal ? (
                     <>

@@ -17,31 +17,30 @@ const storage = multer.diskStorage({
     cb(null, originalName); // 파일명에 타임스탬프 추가하여 저장
   }
 });
-
-
 const upload = multer({ storage: storage });
+
 // Create and Save a new Submission
-// Create and Save a new Submission
-exports.create = [upload.single('file'), async (req, res) => {
-  
+exports.create = [upload.array('files', 5), async (req, res) => {
   try {
-    // 파일명이 깨지지 않도록 디코딩 처리
-    const decodedFileName = req.file ? Buffer.from(req.file.originalname, 'latin1').toString('utf8') : null;
+    console.log("Request files:", req.files); // 파일 로그 확인
+    console.log("Request body:", req.body); // 요청 바디 확인
+
+    // 파일명과 경로를 |로 구분하여 하나의 문자열로 저장
+    const fileNames = req.files.map(file => file.originalname).join('|');
+    const filePaths = req.files.map(file => file.path).join('|');
 
     const submission = {
-      document_type_id: req.body.document_type_id || 1,
+      document_type_id: req.body.document_type_id, // 문자열 타입 유지
       title: req.body.title,
       teamName: req.body.teamName,
       member: req.body.member,
       thought: req.body.thought,
-      fileName: decodedFileName,
-      filePath: req.file ? req.file.path : null
+      fileName: fileNames || null, // 파일 이름
+      filePath: filePaths || null  // 파일 경로
     };
 
-    
-    // 데이터베이스에 새 제출물 저장
     const data = await Submission.create(submission);
-    return res.status(201).send(data);  // 성공 시 응답 반환
+    return res.status(201).send(data); // 성공 시 응답 반환
   } catch (err) {
     console.error("Error during submission creation:", err.message);
     return res.status(500).send({
@@ -101,7 +100,18 @@ exports.findOne = (req, res) => {
   Submission.findByPk(id)
     .then(data => {
       if (data) {
-        res.send(data);
+        // 파일 이름과 경로를 배열로 변환
+        const fileNames = data.fileName ? data.fileName.split('|') : [];
+        const filePaths = data.filePath ? data.filePath.split('|') : [];
+
+        // 수정된 응답 데이터로 설정
+        const responseData = {
+          ...data.toJSON(),
+          fileNames: fileNames,
+          filePaths: filePaths
+        };
+
+        res.send(responseData);
       } else {
         res.status(404).send({
           message: `Cannot find Submission with id=${id}.`
@@ -115,10 +125,10 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update an Submission by the id in the request
-exports.update = [upload.single('file'), (req, res) => {
+// Update a Submission by the id in the request
+exports.update = [upload.array('files', 5), (req, res) => {
   console.log("Update Request Body:", req.body);
-  console.log("Update Request File:", req.file);
+  console.log("Update Request Files:", req.files);
 
   const id = req.params.id;
 
@@ -130,18 +140,19 @@ exports.update = [upload.single('file'), (req, res) => {
               return;
           }
 
-          // 파일명이 깨지지 않도록 디코딩 처리
-          const decodedFileName = req.file ? Buffer.from(req.file.originalname, 'latin1').toString('utf8') : submission.file_name;
+          // 새로운 파일이 업로드된 경우, 파일명과 경로를 |로 구분하여 문자열로 저장
+          const fileNames = req.files ? req.files.map(file => Buffer.from(file.originalname, 'latin1').toString('utf8')).join('|') : submission.file_name;
+          const filePaths = req.files ? req.files.map(file => file.path).join('|') : submission.file_path;
 
-          // 새로운 파일이 없으면 기존 파일 경로와 이름을 유지합니다.
+          // 업데이트할 데이터를 준비합니다.
           const updatedData = {
               document_type_id: req.body.document_type_id || submission.document_type_id,
               title: req.body.title || submission.title,
               teamName: req.body.teamName || submission.teamName,
               member: req.body.member || submission.member,
               thought: req.body.thought || submission.thought,
-              file_name: req.file ? decodedFileName : submission.file_name,  // 디코딩된 파일명 사용
-              file_path: req.file ? req.file.path : submission.file_path
+              file_name: fileNames,
+              file_path: filePaths
           };
 
           // 데이터베이스에서 업데이트를 수행합니다.
@@ -170,19 +181,21 @@ exports.update = [upload.single('file'), (req, res) => {
       });
 }];
 
-
-
-
-
-// Delete an Submission with the specified id in the request
+// Delete a Submission with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
   Submission.findByPk(id)
     .then(submission => {
       if (submission && submission.file_path) {
-        fs.unlink(submission.file_path, (err) => {
-          if (err) console.log("Failed to delete file:", err);
+        // 파일 경로들을 배열로 나누기
+        const filePaths = submission.file_path.split('|');
+        
+        // 각각의 파일 경로에 대해 파일 삭제
+        filePaths.forEach(filePath => {
+          fs.unlink(filePath, (err) => {
+            if (err) console.log("Failed to delete file:", err);
+          });
         });
       }
       return Submission.destroy({ where: { id: id } });
@@ -209,8 +222,12 @@ exports.deleteAll = (req, res) => {
     .then(submissions => {
       submissions.forEach(submission => {
         if (submission.file_path) {
-          fs.unlink(submission.file_path, (err) => {
-            if (err) console.log("Failed to delete file:", err);
+          // 파일 경로가 다중 파일 형태로 저장되어 있으면 |로 분리하여 각각 삭제
+          const filePaths = submission.file_path.split('|');
+          filePaths.forEach(filePath => {
+            fs.unlink(filePath, (err) => {
+              if (err) console.log("Failed to delete file:", err);
+            });
           });
         }
       });
