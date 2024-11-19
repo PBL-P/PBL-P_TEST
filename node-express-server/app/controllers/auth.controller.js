@@ -24,15 +24,15 @@ exports.register = async (req, res) => {
 
 // 로그인
 exports.login = async (req, res) => {
-  const { student_id, password } = req.body;
+  const { user_id, password } = req.body;
 
-  if (!student_id || !password) {
-    return res.status(400).send({ message: "Student ID and Password are required!" });
+  if (!user_id || !password) {
+    return res.status(400).send({ message: "User ID and Password are required!" });
   }
 
   try {
     // 사용자 조회
-    const user = await User.findOne({ where: { student_id } });
+    const user = await User.findOne({ where: { user_id } });
 
     if (!user) {
       return res.status(404).send({ message: "User not found!" });
