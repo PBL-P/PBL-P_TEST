@@ -28,6 +28,35 @@ class PlanDataService {
 	findByTitle(title) {
     return http.get(`/instruction/plan/submit?title=${title}`);
   }
+  // 제안서 - 예시
+  e_getAll() {
+    return http.get("/example/plan");  // plans 경로로 변경
+  }
+
+  e_get(id) {
+    return http.get(`/example/plan/${id}`);
+  }
+
+  e_create(data) {
+    return http.post("/example/plan/register", data);
+  }
+
+  e_update(id, data) {
+    return http.put(`/example/plan/register/${id}`, data);
+  }
+
+  e_delete(id) {
+    return http.delete(`/example/plan/${id}`);
+  }
+
+  e_deleteAll() {
+    return http.delete(`/example/plan`);
+  }
+
+  e_findByTitle(title) {
+    return http.get(`/example/plan?title=${title}`);
+  }  
+  
   // 기획서 - 제출
   s_getAll() {
     return http.get("/submission/plan/submit");  // plans 경로로 변경

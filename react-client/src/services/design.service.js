@@ -28,6 +28,34 @@ class DesignDataService {
 	findByTitle(title) {
     return http.get(`/instruction/design/submit?title=${title}`);
   }
+  // 제안서 - 예시
+  e_getAll() {
+    return http.get("/example/design");  // designs 경로로 변경
+  }
+
+  e_get(id) {
+    return http.get(`/example/design/${id}`);
+  }
+
+  e_create(data) {
+    return http.post("/example/design/register", data);
+  }
+
+  e_update(id, data) {
+    return http.put(`/example/design/register/${id}`, data);
+  }
+
+  e_delete(id) {
+    return http.delete(`/example/design/${id}`);
+  }
+
+  e_deleteAll() {
+    return http.delete(`/example/design`);
+  }
+
+  e_findByTitle(title) {
+    return http.get(`/example/design?title=${title}`);
+  }    
   // 설계서 - 제출
   s_getAll() {
     return http.get("/submission/design/submit");  // designs 경로로 변경

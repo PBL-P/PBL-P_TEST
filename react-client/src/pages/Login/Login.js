@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import mainImage from "./main_image.png";
 import logo from "./jeju_logo.png";
 import text from "./text.png";
+import LoginDataService from "../../services/login.service";
+import { useNavigate } from "react-router-dom";
 
 // Styled Components
 const LoginContainer = styled.div`
@@ -10,6 +12,7 @@ const LoginContainer = styled.div`
   height: 100vh;
   max-height: 100vh;
   min-height: 600px;
+  width: 100%;
 `;
 
 const LeftPanel = styled.div`
@@ -22,14 +25,13 @@ const LeftPanel = styled.div`
 `;
 
 const MiddlePanel = styled.div`
-  flex: 0 0 30%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #f9f9f9;
   padding: 40px 20px;
-  min-width: 300px;
+  width: 100%;
 `;
 
 const Logo = styled.img`
@@ -179,24 +181,92 @@ const PlanIcon = styled.img`
 
 // Component
 const Login = () => {
+  const [formData, setFormData] = useState({
+    user_id: "",
+    password: "",
+  });
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.user_id || !formData.password) {
+      setErrorMessage("아이디와 비밀번호를 모두 입력해주세요.");
+      setSuccessMessage("");
+      return;
+    }
+
+    try {
+      const response = await LoginDataService.login({
+        user_id: formData.user_id,
+        password: formData.password,
+      });
+      console.log(response.status);
+      if (response.status === 200) {
+        // 성공적으로 로그인한 경우
+        setSuccessMessage("로그인에 성공했습니다!");
+        setErrorMessage("");
+        console.log("로그인 성공:", response.data);
+
+        // 필요한 경우 리다이렉트 처리
+        // /main으로 리다이렉트
+        navigate("/main");
+              
+      }
+    } catch (error) {
+      setSuccessMessage("");
+      if (error.response) {
+        // 서버가 반환한 오류
+        if (error.response.status === 400) {
+          setErrorMessage("아이디 또는 비밀번호가 잘못되었습니다. 다시 확인해주세요.");
+        } else if (error.response.status === 500) {
+          setErrorMessage("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        } else {
+          setErrorMessage("알 수 없는 오류가 발생했습니다.");
+        }
+      } else {
+        // 네트워크 오류 등
+        setErrorMessage("서버와의 연결에 실패했습니다. 인터넷 연결을 확인해주세요.");
+      }
+      console.error("로그인 오류:", error.response?.data || error.message);
+    }
+  };
   return (
     <LoginContainer>
-      {/* 왼쪽 패널 */}
-      <LeftPanel />
 
       {/* 가운데 로그인 폼 */}
       <MiddlePanel>
-        <Logo src={logo} alt="제주대학교 로고" />
+      <Logo src={logo} alt="제주대학교 로고" />
         <PBLBox>PBL - P 시스템</PBLBox>
-        <form>
+        <form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="student-id">아이디(학번)</Label>
-            <FormInput type="text" id="student-id" placeholder="학번을 입력하세요" />
+            <Label htmlFor="user_id">아이디</Label>
+            <FormInput
+              type="text"
+              id="user_id"
+              placeholder="아이디를 입력하세요"
+              value={formData.user_id}
+              onChange={handleInputChange}
+            />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="password">비밀번호</Label>
-            <FormInput type="password" id="password" placeholder="비밀번호를 입력하세요" />
+            <FormInput
+              type="password"
+              id="password"
+              placeholder="비밀번호를 입력하세요"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
           </FormGroup>
+          {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
           <LoginButton type="submit">로그인</LoginButton>
           <Links>
             <a href="#">아이디(학번) 찾기</a>
@@ -205,281 +275,7 @@ const Login = () => {
         </form>
       </MiddlePanel>
 
-      {/* 오른쪽 패널 */}
-      <RightPanel>
-        <Heading>
-          <PlanIcon src={text} alt="문서 아이콘" />
-          교수 계획서
-        </Heading>
-        <SubHeading>1. 강좌 및 담당 교수</SubHeading>
-        <Table>
-          <tbody>
-            <tr>
-              <th>수강번호</th>
-              <td>466306</td>
-              <th>교과목명</th>
-              <td>SW융합캡스톤디자인 I</td>
-            </tr>
-            <tr>
-              <th>담당교수</th>
-              <td>김도현</td>
-              <th>이메일</th>
-              <td>kimdh@jejunu.ac.kr</td>
-            </tr>
-            <tr>
-              <th>시수/학점</th>
-              <td>2/2</td>
-              <th>연구실전화</th>
-              <td>064-754-3658</td>
-            </tr>
-          </tbody>
-        </Table>
-        {/* 교과목 개요 */}
-        <SubHeading>2. 교과목 개요</SubHeading>
-        <p>
-          창의적인 개발 경험과 경쟁력 있는 IT 기술을 배양하기 위해
-          PBL(Project Based Learning) 기반의 학습을 진행하고, 문제 SW 프로젝트
-          주제를 선정하고 소프트웨어 개발 기법 및 도구를 활용하여 실제로 사용할 수 있는 프로그램을 실질적으로
-          개발한다.
-        </p>
-
-        {/* 교육 목표 */}
-        <SubHeading>3. 교육 목표</SubHeading>
-        <Table className="objective-table">
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>문제 해결을 위한 SW 프로젝트 주제를 선정하고 제안서를 작성할 수 있는 능력을 배양한다.</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>SW 요구분석을 실시하고 설계서를 작성할 수 있는 능력을 배양한다.</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>프로그램을 실질적으로 개발할 수 있는 능력을 배양한다.</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>구현한 프로그램을 테스트하고 최종 보고서를 작성할 수 있는 능력을 배양한다.</td>
-            </tr>
-          </tbody>
-        </Table>
-        <SubHeading>4. 교수학습 방법(비율)</SubHeading>
-        <Table className="learning-method-table">
-          <thead>
-            <tr>
-              <th>이론강의</th>
-              <th>이론/실습</th>
-              <th>실험/실습/실기형</th>
-              <th>문제(해결)중심학습</th>
-              <th>팀기반학습(협동학습)</th>
-              <th>프로젝트학습</th>
-              <th>토의/토론</th>
-              <th>세미나</th>
-              <th>하브루타</th>
-              <th>플립러닝</th>
-              <th>블렌디드</th>
-              <th>계</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>40.0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>60.0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>100%</td>
-            </tr>
-          </tbody>
-        </Table>
-        {/* 주차별 교수계획서 */}
-        <SubHeading>5. 주차별 교수계획서</SubHeading>
-        <Table className="weekly-plan-table">
-          <thead>
-            <tr>
-              <th>주차</th>
-              <th>교수내용(필수항목)</th>
-              <th>주요 교수학습방법(필수항목)</th>
-              <th>교재범위</th>
-              <th>비고</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>캡스톤디자인 교과목 소개</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>SW 개발 절차 및 팀 구성, 성찰 및 이론 소개</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>PBL(Project Based Learning) 기반 캡스톤디자인 개발 절차 및 제안 방법 설명</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>SW 기술 기반 개발 컴퓨터 프로그램 제안서 작성 요령 및 방법 설명</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>1차 컴퓨터 프로그램 제안서 발표 및 검토회</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>2차 컴퓨터 프로그램 제안서 발표 및 검토회</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>7</td>
-              <td>사용자 인터페이스 설계 도출 및 방법 설명</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>8</td>
-              <td>UML 기반 컴퓨터 프로그램 설계서 작성법 소개</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>9</td>
-              <td>사용자 인터페이스 설계 발표 및 검토회</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>10</td>
-              <td>1차 컴퓨터 프로그램 설계 발표 및 검토회</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>11</td>
-              <td>2차 컴퓨터 프로그램 설계 발표 및 검토회</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>12</td>
-              <td>컴퓨터 프로그램 테스트 및 최종 결과 보고서 작성 요령</td>
-              <td>이론강의</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>13</td>
-              <td>1차 컴퓨터 프로그램 구현 결과 발표 및 평가</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>14</td>
-              <td>2차 컴퓨터 프로그램 구현 결과 발표 및 평가</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>15</td>
-              <td>3차 컴퓨터 프로그램 구현 결과 발표 및 평가</td>
-              <td>프로젝트학습</td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </Table>
-
-        {/* 평가 방법 */}
-        <SubHeading>6. 평가방법</SubHeading>
-        <Table className="evaluation-table">
-          <thead>
-            <tr>
-              <th>평가요소</th>
-              <th>출석</th>
-              <th>중간고사</th>
-              <th>기말고사</th>
-              <th>과제물</th>
-              <th>수시고사</th>
-              <th>기타</th>
-              <th>계</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>GRADE</td>
-              <td>20</td>
-              <td>20</td>
-              <td>40</td>
-              <td>20</td>
-              <td>0</td>
-              <td>0</td>
-              <td>100</td>
-            </tr>
-          </tbody>
-        </Table>
-
-        {/* 과제 */}
-        <SubHeading>7. 과제</SubHeading>
-        <Table className="assignment-table">
-          <thead>
-            <tr>
-              <th>상태</th>
-              <th>과제</th>
-              <th>과제명</th>
-              <th>참고사항</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>과제1</td>
-              <td>SW 캡스톤디자인 설계 보고서</td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </Table>
-
-        {/* 기타 사항 */}
-        <SubHeading>8. 기타 사항</SubHeading>
-        <p>
-          중간고사는 제안서 발표 및 평가로 진행될 예정입니다. <br />
-          기말고사는 최종 결과 발표 및 보고서로 진행될 예정입니다.
-        </p>
-    
-    
-      </RightPanel>
+      
     </LoginContainer>
   );
 };

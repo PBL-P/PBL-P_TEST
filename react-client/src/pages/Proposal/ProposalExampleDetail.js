@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import ReportDataService from "../../services/report.service";
+import ProposalDataService from "../../services/proposal.service";
 import Title from "../../components/Title";
 import styled from "styled-components";
 
@@ -38,27 +38,27 @@ const OptionsMenu = styled.div`
     }
 `;
 
-const ReportExampleDetail = () => {
+const ProposalExampleDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [report, setReport] = useState(null);
+    const [proposal, setProposal] = useState(null);
     const [visibleOptions, setVisibleOptions] = useState(false);
     const optionsRef = useRef();
 
-    const getReport = (id) => {
-        ReportDataService.e_get(id)
+    const getProposal = (id) => {
+        ProposalDataService.e_get(id)
             .then((response) => {
-                setReport(response.data);
+                setProposal(response.data);
             })
             .catch((e) => console.error(e));
     };
 
-    const deleteReport = () => {
+    const deleteProposal = () => {
         if (window.confirm("정말로 삭제하시겠습니까?")) {
-            ReportDataService.e_delete(id)
+            ProposalDataService.e_delete(id)
                 .then(() => {
                     alert("삭제되었습니다.");
-                    navigate("/report");
+                    navigate("/proposal");
                 })
                 .catch((e) => console.error(e));
         }
@@ -78,35 +78,35 @@ const ReportExampleDetail = () => {
     }, []);
 
     useEffect(() => {
-        getReport(id);
+        getProposal(id);
     }, [id]);
 
     return (
         <>
             <Title kind="form" />
             <div style={{ padding: "16px 24px", position: "relative" }}>
-                {report ? (
+                {proposal ? (
                     <>
-                        <h3>{report.title}</h3>
+                        <h3>{proposal.title}</h3>
                         <p>
-                            <strong>내용:</strong> {report.content}
+                            <strong>내용:</strong> {proposal.content}
                         </p>
                         <p>
                             <strong>첨부 자료:</strong>{" "}
                             <a
-                                href={`http://localhost:8080/${report.file_path}`}
-                                download={report.file_name}
+                                href={`http://localhost:8080/${proposal.file_path}`}
+                                download={proposal.file_name}
                             >
-                                {report.file_name}
+                                {proposal.file_name}
                             </a>
                         </p>
                         <p>
                             <strong>작성일:</strong>{" "}
-                            {new Date(report.created_at).toLocaleDateString("ko-KR")}
+                            {new Date(proposal.created_at).toLocaleDateString("ko-KR")}
                         </p>
                         <p>
                             <strong>수정일:</strong>{" "}
-                            {new Date(report.updated_at).toLocaleDateString("ko-KR")}
+                            {new Date(proposal.updated_at).toLocaleDateString("ko-KR")}
                         </p>
                         <OptionsIcon
                             onClick={(e) => {
@@ -117,8 +117,8 @@ const ReportExampleDetail = () => {
                             ⋮
                         </OptionsIcon>
                         <OptionsMenu ref={optionsRef} visible={visibleOptions}>
-                            <button onClick={() => navigate(`/report/edit/${id}`)}>수정</button>
-                            <button onClick={deleteReport}>삭제</button>
+                            <button onClick={() => navigate(`/proposal/edit/${id}`)}>수정</button>
+                            <button onClick={deleteProposal}>삭제</button>
                         </OptionsMenu>
                     </>
                 ) : (
@@ -129,4 +129,4 @@ const ReportExampleDetail = () => {
     );
 };
 
-export default ReportExampleDetail;
+export default ProposalExampleDetail;

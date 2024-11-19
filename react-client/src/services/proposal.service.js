@@ -28,6 +28,34 @@ class ProposalDataService {
 	findByTitle(title) {
     return http.get(`/instruction/proposal/submit?title=${title}`);
   }
+  // 제안서 - 예시
+  e_getAll() {
+    return http.get("/example/proposal");  // proposals 경로로 변경
+  }
+
+  e_get(id) {
+    return http.get(`/example/proposal/${id}`);
+  }
+
+  e_create(data) {
+    return http.post("/example/proposal/register", data);
+  }
+
+  e_update(id, data) {
+    return http.put(`/example/proposal/register/${id}`, data);
+  }
+
+  e_delete(id) {
+    return http.delete(`/example/proposal/${id}`);
+  }
+
+  e_deleteAll() {
+    return http.delete(`/example/proposal`);
+  }
+
+  e_findByTitle(title) {
+    return http.get(`/example/proposal?title=${title}`);
+  }  
   // 제안서 - 제출
   s_getAll() {
     return http.get("/submission/proposal/submit");  // proposals 경로로 변경

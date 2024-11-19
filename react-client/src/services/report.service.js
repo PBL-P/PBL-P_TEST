@@ -28,6 +28,34 @@ class ReportDataService {
 	findByTitle(title) {
     return http.get(`/instruction/report/submit?title=${title}`);
   }
+  // 제안서 - 예시
+  e_getAll() {
+    return http.get("/example/report");  // reports 경로로 변경
+  }
+
+  e_get(id) {
+    return http.get(`/example/report/${id}`);
+  }
+
+  e_create(data) {
+    return http.post("/example/report/register", data);
+  }
+
+  e_update(id, data) {
+    return http.put(`/example/report/register/${id}`, data);
+  }
+
+  e_delete(id) {
+    return http.delete(`/example/report/${id}`);
+  }
+
+  e_deleteAll() {
+    return http.delete(`/example/report`);
+  }
+
+  e_findByTitle(title) {
+    return http.get(`/example/report?title=${title}`);
+  }    
   // 결과보고서 - 제출
   s_getAll() {
     return http.get("/submission/report/submit");  // reports 경로로 변경

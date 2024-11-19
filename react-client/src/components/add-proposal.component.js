@@ -39,7 +39,7 @@ const FormGroup = styled.div`
   input[type="text"],
   textarea,
   input[type="file"] {
-    flex: 1; /* 남은 공간을 차지 */
+    flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -58,7 +58,7 @@ const FormFile = styled.div`
   margin-bottom: 15px;
 
   label {
-    width: 100px; /* 제목의 고정 너비 */
+    width: 100px;
     margin-right: 10px;
     font-weight: bold;
   }
@@ -74,7 +74,7 @@ const SuccessMessage = styled.h4`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: flex-end; /* 오른쪽으로 정렬 */
+  justify-content: flex-end;
   margin-top: 10px;
 `;
 
@@ -137,7 +137,12 @@ const AddProposal = ({ text, kind }) => {
   useEffect(() => {
     if (id) {
       const fetchData =
-        kind === "sample" ? ProposalDataService.get : ProposalDataService.s_get;
+        kind === "instruction"
+          ? ProposalDataService.get
+          : kind === "example"
+          ? ProposalDataService.e_get
+          : ProposalDataService.s_get;
+
       fetchData(id)
         .then((response) => {
           const data = response.data;
@@ -163,10 +168,9 @@ const AddProposal = ({ text, kind }) => {
     formData.append("title", title);
     formData.append("document_type_id", getDocumentKey());
 
-    if (kind === "sample") {
+    if (kind === "instruction" || kind === "example") {
       formData.append("content", content);
 
-      // 강의 자료는 단일 파일 처리
       if (presentationFile) {
         formData.append("file", presentationFile); // 'file' 키로 전송
       }
@@ -175,41 +179,28 @@ const AddProposal = ({ text, kind }) => {
       formData.append("member", member);
       formData.append("thought", thought);
 
-      // 제출 부분은 다중 파일 처리
-      if (presentationFile) {
-        formData.append("files", presentationFile);
-      }
-      if (videoFile) {
-        formData.append("files", videoFile);
-      }
-      if (demoVideo) {
-        formData.append("files", demoVideo);
-      }
-      if (sourceFile) {
-        formData.append("files", sourceFile);
-      }
-      if (reportFile) {
-        formData.append("files", reportFile);
-      }
-    }
-
-    // formData 디버깅
-    console.log("FormData contents:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
+      if (presentationFile) formData.append("files", presentationFile);
+      if (videoFile) formData.append("files", videoFile);
+      if (demoVideo) formData.append("files", demoVideo);
+      if (sourceFile) formData.append("files", sourceFile);
+      if (reportFile) formData.append("files", reportFile);
     }
 
     const saveFunction =
-      kind === "sample"
+      kind === "instruction"
         ? id
           ? ProposalDataService.update
           : ProposalDataService.create
+        : kind === "example"
+        ? id
+          ? ProposalDataService.e_update
+          : ProposalDataService.e_create
         : id
         ? ProposalDataService.s_update
         : ProposalDataService.s_create;
 
     const request = id ? saveFunction(id, formData) : saveFunction(formData);
-
+    
     request
       .then((response) => {
         setSubmitted(true);
@@ -218,7 +209,7 @@ const AddProposal = ({ text, kind }) => {
       .catch((e) => {
         console.error("Error:", e.response ? e.response.data : e.message);
       });
-};
+  };
 
   const newProposal = () => {
     setRedirect(true);
@@ -231,7 +222,8 @@ const AddProposal = ({ text, kind }) => {
   return (
     <>
       <Title kind="form" />
-      {kind === "sample" && <FormHeader>강의 자료 등록</FormHeader>}
+      {kind === "instruction" && <FormHeader>양식 자료 등록</FormHeader>}
+      {kind === "example" && <FormHeader>샘플 자료 등록</FormHeader>}
       {(kind === "version" || kind === "report") && (
         <FormHeader>과제 제출</FormHeader>
       )}
@@ -256,11 +248,10 @@ const AddProposal = ({ text, kind }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 name="title"
                 placeholder="최대 20자 입력"
-                maxlength="20"
+                maxLength="20"
               />
             </FormGroup>
-
-            {kind === "sample" && (
+            {(kind === "instruction" || kind === "example") && (
               <>
                 <FormGroup>
                   <label htmlFor="content">내용</label>
@@ -271,7 +262,7 @@ const AddProposal = ({ text, kind }) => {
                     onChange={(e) => setContent(e.target.value)}
                     name="content"
                     placeholder="최대 500자 입력"
-                    maxlength="500"
+                    maxLength="500"
                   />
                 </FormGroup>
                 <FormFile>
@@ -285,7 +276,6 @@ const AddProposal = ({ text, kind }) => {
                 </FormFile>
               </>
             )}
-
             {(kind === "version" || kind === "report") && (
               <>
                 <FormGroup>
@@ -319,7 +309,7 @@ const AddProposal = ({ text, kind }) => {
                     onChange={(e) => setThought(e.target.value)}
                     name="thought"
                     placeholder="최대 500자 입력"
-                    maxlength="500"
+                    maxLength="500"
                   />
                 </FormGroup>
                 <FormFile>
@@ -345,7 +335,6 @@ const AddProposal = ({ text, kind }) => {
                 </FormFile>
               </>
             )}
-
             {kind === "report" && (
               <>
                 <FormFile>

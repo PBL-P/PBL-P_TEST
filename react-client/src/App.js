@@ -17,21 +17,26 @@ import Video from "./pages/Main/VideoComponent";
 import Proposal from "./pages/Proposal/Proposal";
 import ProposalDetail from "./pages/Proposal/ProposalDetail";
 import ProposalSubmitDetail from "./pages/Proposal/ProposalSubmitDetail";
+import ProposalExampleDetail from "./pages/Proposal/ProposalExampleDetail";
 
 import Plan from "./pages/Plan/Plan";
 import PlanSubmit from "./pages/Plan/PlanSubmit";
 import PlanDetail from "./pages/Plan/PlanDetail";
 import PlanSubmitDetail from "./pages/Plan/PlanSubmitDetail";
+import PlanExampleDetail from "./pages/Plan/PlanExampleDetail";
 
 import Design from "./pages/Design/Design";
 import DesignSubmit from "./pages/Design/DesignSubmit";
 import DesignDetail from "./pages/Design/DesignDetail";
 import DesignSubmitDetail from "./pages/Design/DesignSubmitDetail";
+import DesignExampleDetail from "./pages/Design/DesignExampleDetail";
 
 import Report from "./pages/Report/Report";
 import ReportSubmit from "./pages/Report/ReportSubmit";
 import ReportDetail from "./pages/Report/ReportDetail";
 import ReportSubmitDetail from "./pages/Report/ReportSubmitDetail";
+import ReportExampleDetail from "./pages/Report/ReportExampleDetail";
+
 
 import Announcement from "./pages/Announcement/Announcement";
 import AddAnnouncement from "./pages/Announcement/AddAnnouncement";
@@ -65,7 +70,13 @@ const App = () => {
               <Route
                 path="/proposal/register"
                 element={
-                  <AddProposal text="제안서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal kind="instruction" />
+                }
+              />
+              <Route
+                path="/proposal/example/register"
+                element={
+                  <AddProposal kind="example" />
                 }
               />
               <Route
@@ -78,11 +89,21 @@ const App = () => {
                 path="/proposal/submit/:id"
                 element={<ProposalSubmitDetail />}
               />
+              <Route
+                path="/proposal/example/:id"
+                element={<ProposalExampleDetail />}
+              />
               {/* 제안서 업데이트 */}
               <Route
                 path="/proposal/register/:id"
                 element={
                   <AddProposal text="제안서 - 작성 방법 및 예시" kind="sample" />
+                }
+              />
+              <Route
+                path="/proposal/example/register/:id"
+                element={
+                  <AddProposal  kind="example" />
                 }
               />
               <Route
@@ -99,10 +120,15 @@ const App = () => {
               <Route
                 path="/plan/register"
                 element={
-                  <AddProposal text="기획서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal kind="instruction" />
                 }
               />
-              <Route path="/plan/submit" element={<PlanSubmit />} />
+              <Route
+                path="/plan/example/register"
+                element={
+                  <AddProposal kind="example" />
+                }
+              />
               <Route
                 path="/plan/submit/register"
                 element={
@@ -113,11 +139,21 @@ const App = () => {
                 path="/plan/submit/:id"
                 element={<PlanSubmitDetail />}
               />
+              <Route
+                path="/plan/example/:id"
+                element={<PlanExampleDetail />}
+              />
               {/* 기획서 업데이트 */}
               <Route
                 path="/plan/register/:id"
                 element={
                   <AddProposal text="기획서 - 작성 방법 및 예시" kind="sample" />
+                }
+              />
+              <Route
+                path="/plan/example/register/:id"
+                element={
+                  <AddProposal  kind="example" />
                 }
               />
               <Route
@@ -128,16 +164,22 @@ const App = () => {
               />
               {/* 기획서 부분 종료 */}
 
+
               {/* 설계서 부분 시작 */}
               <Route path="/design" element={<Design />} />
               <Route path="/design/:id" element={<DesignDetail />} />
               <Route
                 path="/design/register"
                 element={
-                  <AddProposal text="설계서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal kind="instruction" />
                 }
               />
-              <Route path="/design/submit" element={<DesignSubmit />} />
+              <Route
+                path="/design/example/register"
+                element={
+                  <AddProposal kind="example" />
+                }
+              />
               <Route
                 path="/design/submit/register"
                 element={
@@ -148,11 +190,21 @@ const App = () => {
                 path="/design/submit/:id"
                 element={<DesignSubmitDetail />}
               />
+              <Route
+                path="/design/example/:id"
+                element={<DesignExampleDetail />}
+              />
               {/* 설계서 업데이트 */}
               <Route
                 path="/design/register/:id"
                 element={
                   <AddProposal text="설계서 - 작성 방법 및 예시" kind="sample" />
+                }
+              />
+              <Route
+                path="/design/example/register/:id"
+                element={
+                  <AddProposal  kind="example" />
                 }
               />
               <Route
@@ -169,25 +221,41 @@ const App = () => {
               <Route
                 path="/report/register"
                 element={
-                  <AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal kind="instruction" />
+                }
+              />
+              <Route
+                path="/report/example/register"
+                element={
+                  <AddProposal kind="example" />
                 }
               />
               <Route path="/report/submit" element={<ReportSubmit />} />
               <Route
                 path="/report/submit/register"
                 element={
-                  <AddProposal text="결과 보고서 - 제출 버전 관리" kind="report" />
+                  <AddProposal kind="report" />
                 }
               />
               <Route
                 path="/report/submit/:id"
                 element={<ReportSubmitDetail />}
               />
+              <Route
+                path="/report/example/:id"
+                element={<ReportExampleDetail />}
+              />
               {/* 결과 보고서 업데이트 */}
               <Route
                 path="/report/register/:id"
                 element={
-                  <AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="instruction" />
+                }
+              />
+              <Route
+                path="/report/example/register/:id"
+                element={
+                  <AddProposal text="결과 보고서 - 작성 방법 및 예시" kind="example" />
                 }
               />
               <Route
