@@ -142,26 +142,54 @@ const AddProposal = ({ text, kind }) => {
           : kind === "example"
           ? ProposalDataService.e_get
           : ProposalDataService.s_get;
-
+  
       fetchData(id)
         .then((response) => {
           const data = response.data;
+          console.log(data);
+  
+          // 기본 데이터 설정
           setTitle(data.title);
           setContent(data.content || "");
           setTeamName(data.teamName || "");
           setMember(data.member || "");
           setThought(data.thought || "");
-
-          const fileNames = data.file_name ? data.file_name.split("|") : [];
-          const filePaths = data.file_path ? data.file_path.split("|") : [];
+  
+          // file_name과 file_path 처리
+          const fileNames = data.file_name
+            ? Array.isArray(data.file_name) // 배열인지 확인
+              ? data.file_name
+              : [data.file_name] // 단일 값인 경우 배열로 변환
+            : data.fileName // 대체 키 확인
+            ? data.fileName.split("|").map((name) => name.trim())
+            : []; // 없으면 빈 배열
+  
+          const filePaths = data.file_path
+            ? Array.isArray(data.file_path) // 배열인지 확인
+              ? data.file_path
+              : [data.file_path] // 단일 값인 경우 배열로 변환
+            : data.filePath // 대체 키 확인
+            ? data.filePath.split("|").map((path) => path.trim())
+            : []; // 없으면 빈 배열
+  
+          // 기존 파일 정보 저장
           setExistingFiles({
             fileName: fileNames,
             filePath: filePaths,
           });
+  
+          // 상태 업데이트
+          setPresentationFile(fileNames[0] || null);
+          setVideoFile(fileNames[1] || null);
+          setDemoVideo(fileNames[2] || null);
+          setSourceFile(fileNames[3] || null);
+          setReportFile(fileNames[4] || null);
         })
-        .catch((e) => console.log(e));
+        .catch((e) => console.error(e));
     }
   }, [id, kind]);
+  
+
 
   const saveProposal = () => {
     const formData = new FormData();
@@ -267,6 +295,20 @@ const AddProposal = ({ text, kind }) => {
                 </FormGroup>
                 <FormFile>
                   <label htmlFor="presentationFile">파일 첨부</label>
+                  {existingFiles.fileName?.[0] && (
+                    <p>
+                      기존 파일:{" "}
+                      <strong>
+                        <a
+                          href={`http://localhost:8080/${existingFiles.filePath?.[0]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {existingFiles.fileName[0]}
+                        </a>
+                      </strong>
+                    </p>
+                  )}
                   <input
                     type="file"
                     id="presentationFile"
@@ -274,6 +316,7 @@ const AddProposal = ({ text, kind }) => {
                     name="presentationFile"
                   />
                 </FormFile>
+
               </>
             )}
             {(kind === "version" || kind === "report") && (
@@ -312,8 +355,23 @@ const AddProposal = ({ text, kind }) => {
                     maxLength="500"
                   />
                 </FormGroup>
+                <>
                 <FormFile>
                   <label htmlFor="presentationFile">발표 자료</label>
+                  {existingFiles.fileName?.[0] && (
+                    <p>
+                      기존 파일:{" "}
+                      <strong>
+                        <a
+                          href={`http://localhost:8080/${existingFiles.filePath?.[0]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {existingFiles.fileName[0]}
+                        </a>
+                      </strong>
+                    </p>
+                  )}
                   <input
                     type="file"
                     id="presentationFile"
@@ -321,11 +379,23 @@ const AddProposal = ({ text, kind }) => {
                     name="presentationFile"
                   />
                 </FormFile>
+
                 <FormFile>
-                  <label htmlFor="videoFile">
-                    발표 동영상 <br />
-                    (선택사항)
-                  </label>
+                  <label htmlFor="videoFile">발표 동영상</label>
+                  {existingFiles.fileName?.[1] && (
+                    <p>
+                      기존 파일:{" "}
+                      <strong>
+                        <a
+                          href={`http://localhost:8080/${existingFiles.filePath?.[1]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {existingFiles.fileName[1]}
+                        </a>
+                      </strong>
+                    </p>
+                  )}
                   <input
                     type="file"
                     id="videoFile"
@@ -333,37 +403,84 @@ const AddProposal = ({ text, kind }) => {
                     name="videoFile"
                   />
                 </FormFile>
+
+                {kind === "report" && (
+                  <>
+                    <FormFile>
+                      <label htmlFor="demoVideo">시연 동영상</label>
+                      {existingFiles.fileName?.[2] && (
+                        <p>
+                          기존 파일:{" "}
+                          <strong>
+                            <a
+                              href={`http://localhost:8080/${existingFiles.filePath?.[2]}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {existingFiles.fileName[2]}
+                            </a>
+                          </strong>
+                        </p>
+                      )}
+                      <input
+                        type="file"
+                        id="demoVideo"
+                        onChange={(e) => setDemoVideo(e.target.files[0])}
+                        name="demoVideo"
+                      />
+                    </FormFile>
+
+                    <FormFile>
+                      <label htmlFor="sourceFile">소스 프로그램</label>
+                      {existingFiles.fileName?.[3] && (
+                        <p>
+                          기존 파일:{" "}
+                          <strong>
+                            <a
+                              href={`http://localhost:8080/${existingFiles.filePath?.[3]}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {existingFiles.fileName[3]}
+                            </a>
+                          </strong>
+                        </p>
+                      )}
+                      <input
+                        type="file"
+                        id="sourceFile"
+                        onChange={(e) => setSourceFile(e.target.files[0])}
+                        name="sourceFile"
+                      />
+                    </FormFile>
+
+                    <FormFile>
+                      <label htmlFor="reportFile">결과 보고서</label>
+                      {existingFiles.fileName?.[4] && (
+                        <p>
+                          기존 파일:{" "}
+                          <strong>
+                            <a
+                              href={`http://localhost:8080/${existingFiles.filePath?.[4]}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {existingFiles.fileName[4]}
+                            </a>
+                          </strong>
+                        </p>
+                      )}
+                      <input
+                        type="file"
+                        id="reportFile"
+                        onChange={(e) => setReportFile(e.target.files[0])}
+                        name="reportFile"
+                      />
+                    </FormFile>
+                  </>
+                )}
               </>
-            )}
-            {kind === "report" && (
-              <>
-                <FormFile>
-                  <label htmlFor="demoVideo">시연 동영상</label>
-                  <input
-                    type="file"
-                    id="demoVideo"
-                    onChange={(e) => setDemoVideo(e.target.files[0])}
-                    name="demoVideo"
-                  />
-                </FormFile>
-                <FormFile>
-                  <label htmlFor="sourceFile">소스 프로그램</label>
-                  <input
-                    type="file"
-                    id="sourceFile"
-                    onChange={(e) => setSourceFile(e.target.files[0])}
-                    name="sourceFile"
-                  />
-                </FormFile>
-                <FormFile>
-                  <label htmlFor="reportFile">결과 보고서</label>
-                  <input
-                    type="file"
-                    id="reportFile"
-                    onChange={(e) => setReportFile(e.target.files[0])}
-                    name="reportFile"
-                  />
-                </FormFile>
+
               </>
             )}
             <ButtonWrapper>

@@ -4,6 +4,44 @@ import styled from "styled-components";
 import AnnouncementDataService from "../../services/announcement.service";
 import Title from "../../components/Title";
 
+const HeaderWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;       
+    
+`;
+const Y_OptionsIcon = styled.div`
+    cursor: pointer;
+    font-size: 24px;
+    margin-right: 12px;
+`;
+
+const Y_OptionsMenu = styled.div`
+    position: absolute;
+    top: 170px;
+    right: 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: ${(props) => (props.visible ? "block" : "none")}; /* visible 상태 반영 */
+    z-index: 10;
+
+    button {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:hover {
+            background: #f5f5f5;
+        }
+    }
+`;
+
 const Container = styled.div`
     margin: 20px 42px;
     font-family: "Arial", sans-serif;
@@ -215,8 +253,11 @@ const AnnouncementDetail = () => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState({ commenter: "", content: "" });
     const [visibleOptions, setVisibleOptions] = useState(null);
+    const [announcementVisibleOptions, setAnnouncementVisibleOptions] = useState(null);
+    
     const navigate = useNavigate();
     const optionsRef = useRef();
+    const announcementsRef = useRef();
 
     const getAnnouncement = () => {
         AnnouncementDataService.get(id)
@@ -226,7 +267,16 @@ const AnnouncementDetail = () => {
             })
             .catch((e) => console.error("Error fetching announcement:", e));
     };
-
+    const deleteAnnouncement = () => {
+        if (window.confirm("정말로 삭제하시겠습니까?")) {
+            AnnouncementDataService.delete(id)
+                .then(() => {
+                    alert("삭제되었습니다.");
+                    navigate("/announcement");
+                })
+                .catch((e) => console.error("Error deleting announcement:", e));
+        }
+    };
     const fetchComments = () => {
         AnnouncementDataService.c_getAll(id)
             .then((response) => setComments(response.data))
@@ -287,17 +337,27 @@ const AnnouncementDetail = () => {
     };
 
     const handleOutsideClick = (event) => {
-        if (optionsRef.current && !optionsRef.current.contains(event.target)) {
-            setVisibleOptions(null); // 옵션 메뉴를 닫음
+        if (
+            announcementsRef.current &&
+            !announcementsRef.current.contains(event.target)
+        ) {
+            setAnnouncementVisibleOptions(false); // 메뉴 닫기
+        }
+        if (
+            optionsRef.current &&
+            !optionsRef.current.contains(event.target)
+        ) {
+            setVisibleOptions(null); // 댓글 메뉴 닫기
         }
     };
-
+    
     useEffect(() => {
         document.addEventListener("click", handleOutsideClick);
         return () => {
             document.removeEventListener("click", handleOutsideClick);
         };
     }, []);
+    
 
     useEffect(() => {
         getAnnouncement();
@@ -309,7 +369,24 @@ const AnnouncementDetail = () => {
             <Container>
                 {announcement && (
                     <>
-                        <BackButton onClick={() => navigate("/announcement")}>목록으로 이동</BackButton>
+                    <HeaderWrapper>
+                        <BackButton onClick={() => navigate("/announcement")}>
+                            목록으로 이동
+                        </BackButton>
+                        <Y_OptionsIcon
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setAnnouncementVisibleOptions((prev) => !prev); // announcementVisibleOptions 토글
+                            }}
+                        >
+                            <i className="fa-solid fa-ellipsis-vertical"></i>
+                        </Y_OptionsIcon>
+                        <Y_OptionsMenu ref={announcementsRef} visible={announcementVisibleOptions}>
+                            <button onClick={() => navigate(`/announcement/register/${id}`)}>수정</button>
+                            <button onClick={deleteAnnouncement}>삭제</button>
+                        </Y_OptionsMenu>
+                    </HeaderWrapper>
+
                         <Header>{announcement.title}</Header>
                         <Content>
                             <Metadata>

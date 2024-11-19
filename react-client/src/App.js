@@ -97,7 +97,7 @@ const App = () => {
               <Route
                 path="/proposal/register/:id"
                 element={
-                  <AddProposal text="제안서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal text="제안서 - 작성 방법 및 예시" kind="instruction" />
                 }
               />
               <Route
@@ -147,7 +147,7 @@ const App = () => {
               <Route
                 path="/plan/register/:id"
                 element={
-                  <AddProposal text="기획서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal text="기획서 - 작성 방법 및 예시" kind="instruction" />
                 }
               />
               <Route
@@ -198,7 +198,7 @@ const App = () => {
               <Route
                 path="/design/register/:id"
                 element={
-                  <AddProposal text="설계서 - 작성 방법 및 예시" kind="sample" />
+                  <AddProposal text="설계서 - 작성 방법 및 예시" kind="instruction" />
                 }
               />
               <Route

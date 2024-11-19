@@ -24,6 +24,7 @@ const IconImage = styled.img`
   right: 16px;
   width: 44px;
   height: 34px;
+  z-index: 100;
 `;
 
 const IconBox = styled.div``;

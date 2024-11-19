@@ -3,13 +3,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProposalDataService from "../../services/proposal.service";
 import Title from "../../components/Title";
 import styled from "styled-components";
+import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { fullScreenPlugin } from "@react-pdf-viewer/full-screen";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import "@react-pdf-viewer/full-screen/lib/styles/index.css";
 
 const OptionsIcon = styled.div`
     position: absolute;
     top: 12px;
-    right: 12px;
+    right: 24px;
     cursor: pointer;
     font-size: 24px;
+
 `;
 
 const OptionsMenu = styled.div`
@@ -38,12 +45,41 @@ const OptionsMenu = styled.div`
     }
 `;
 
+const ViewerWrapper = styled.div`
+    width: 80%;
+    aspect-ratio: 16 / 9; /* 16:9 비율 유지 */
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #121212;
+    margin: 0 auto; /* 가운데 정렬 */
+    position: relative;
+    border-bottom: 1px solid #ddd;
+`;
+
+const ProposalTitle = styled.div`
+    font-size: 2rem;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+`;
+
+const InfoBox = styled.div`
+    margin-top: 24px;
+`;
+
 const ProposalDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [proposal, setProposal] = useState(null);
     const [visibleOptions, setVisibleOptions] = useState(false);
+    const [hasError, setHasError] = useState(false); // 오류 상태 추가
     const optionsRef = useRef();
+    const [currentPage, setCurrentPage] = useState(0);
+
+    // Plugins
+    const defaultLayoutPluginInstance = defaultLayoutPlugin({
+        sidebarTabs: () => [], // 사이드바 제거
+    });
+    const fullScreenPluginInstance = fullScreenPlugin();
 
     const getProposal = (id) => {
         ProposalDataService.get(id)
@@ -70,6 +106,32 @@ const ProposalDetail = () => {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "ArrowRight") {
+            setCurrentPage((prev) => prev + 1); // 다음 페이지
+        } else if (e.key === "ArrowLeft") {
+            setCurrentPage((prev) => (prev > 0 ? prev - 1 : 0)); // 이전 페이지
+        }
+    };
+
+    const isPdfFile = (filePath) => {
+        // 파일 확장자가 .pdf인지 확인
+        return filePath?.toLowerCase().endsWith(".pdf");
+    };
+
+    useEffect(() => {
+        // 키 이벤트는 전체 화면일 때만 작동
+        const fullScreenContainer = document.querySelector(".viewer-container");
+        if (fullScreenContainer) {
+            fullScreenContainer.addEventListener("keydown", handleKeyDown);
+        }
+        return () => {
+            if (fullScreenContainer) {
+                fullScreenContainer.removeEventListener("keydown", handleKeyDown);
+            }
+        };
+    }, [currentPage]);
+
     useEffect(() => {
         document.addEventListener("click", handleOutsideClick);
         return () => {
@@ -87,37 +149,76 @@ const ProposalDetail = () => {
             <div style={{ padding: "16px 24px", position: "relative" }}>
                 {proposal ? (
                     <>
-                        <h3>{proposal.title}</h3>
-                        <p>
-                            <strong>내용:</strong> {proposal.content}
-                        </p>
-                        <p>
-                            <strong>첨부 자료:</strong>{" "}
-                            <a
-                                href={`http://localhost:8080/${proposal.file_path}`}
-                                download={proposal.file_name}
-                            >
+                        <ProposalTitle>{proposal.title}</ProposalTitle>
+                        <div
+                            style={{
+                                marginTop: "24px",                                
+                                paddingBottom: "24px",
+                                borderBottom: "1px solid #ddd",
+                            }}
+                        >
+                            <h4 style={{ marginBottom: "18px" }}>
+                                <i className="fa-regular fa-file-pdf"></i>
                                 {proposal.file_name}
-                            </a>
-                        </p>
-                        <p>
-                            <strong>작성일:</strong>{" "}
-                            {new Date(proposal.created_at).toLocaleDateString("ko-KR")}
-                        </p>
-                        <p>
-                            <strong>수정일:</strong>{" "}
-                            {new Date(proposal.updated_at).toLocaleDateString("ko-KR")}
-                        </p>
+                            </h4>
+                            {proposal.file_path && isPdfFile(proposal.file_path) && !hasError ? (
+                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
+                                    <ViewerWrapper className="viewer-container" tabIndex={0}>
+                                        <Viewer
+                                            fileUrl={`http://localhost:8080/${proposal.file_path}`}
+                                            plugins={[
+                                                defaultLayoutPluginInstance,
+                                                fullScreenPluginInstance,
+                                            ]}
+                                            theme="dark" // Dark Theme 설정
+                                            renderMode="singlePage" // 슬라이드 형식
+                                            defaultScale={SpecialZoomLevel.PageWidth}
+                                            initialPage={currentPage} // 현재 페이지
+                                            onError={(error) => {
+                                                console.error(
+                                                    "PDF 로드 중 오류 발생. Viewer 숨김:",
+                                                    error
+                                                );
+                                                setHasError(true); // 오류 상태 업데이트
+                                            }}
+                                        />
+                                    </ViewerWrapper>
+                                </Worker>
+                            ) : (
+                                <p>
+                                    <strong>첨부 자료:</strong>{" "}
+                                    <a
+                                        href={`http://localhost:8080/${proposal.file_path}`}
+                                        download={proposal.file_name}
+                                    >
+                                        {proposal.file_name}
+                                    </a>
+                                </p>
+                            )}
+                        </div>
+                        <InfoBox>
+                            <p>
+                                <strong>내용:</strong> {proposal.content}
+                            </p>
+                            <p>
+                                <strong>작성일:</strong>{" "}
+                                {new Date(proposal.created_at).toLocaleDateString("ko-KR")}
+                            </p>
+                            <p>
+                                <strong>수정일:</strong>{" "}
+                                {new Date(proposal.updated_at).toLocaleDateString("ko-KR")}
+                            </p>
+                        </InfoBox>
                         <OptionsIcon
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setVisibleOptions((prev) => !prev);
                             }}
                         >
-                            ⋮
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
                         </OptionsIcon>
                         <OptionsMenu ref={optionsRef} visible={visibleOptions}>
-                            <button onClick={() => navigate(`/proposal/edit/${id}`)}>수정</button>
+                            <button onClick={() => navigate(`/proposal/register/${id}`)}>수정</button>
                             <button onClick={deleteProposal}>삭제</button>
                         </OptionsMenu>
                     </>
