@@ -183,7 +183,7 @@ const ReportSubmitDetail = () => {
                                     {report.filePaths[1] && (
                                         <div style={{ marginTop: "16px", display:"flex"}}>
                                         <p>
-                                            <strong>첨부 자료:</strong>{" "}
+                                            <strong>발표 자료:</strong>{" "}
                                             <a
                                                 href={`http://localhost:8080/${report.filePaths[1]}`}
                                                 download={report.fileNames[1]}
@@ -196,6 +196,74 @@ const ReportSubmitDetail = () => {
                                         </p>
                                         </div>
                                     )}
+                                    {/* 두 번째 파일 다운로드 링크로 표시 */}
+                                    {report.filePaths[2] && (
+                                        <div style={{ marginTop: "16px", display:"flex"}}>
+                                        <p>
+                                            <strong>발표 동영상:</strong>{" "}
+                                            <a
+                                                href={`http://localhost:8080/${report.filePaths[2]}`}
+                                                download={report.fileNames[2]}
+                                                style={{
+                                                    color: "blue",                                                    
+                                                }}
+                                            >
+                                                {report.fileNames[2]}
+                                            </a>
+                                        </p>
+                                        </div>
+                                    )}
+                                    {/* 두 번째 파일 다운로드 링크로 표시 */}
+                                    {report.filePaths[3] && (
+                                        <div style={{ marginTop: "16px", display:"flex"}}>
+                                        <p>
+                                            <strong>시연 동영상:</strong>{" "}
+                                            <a
+                                                href={`http://localhost:8080/${report.filePaths[3]}`}
+                                                download={report.fileNames[3]}
+                                                style={{
+                                                    color: "blue",                                                    
+                                                }}
+                                            >
+                                                {report.fileNames[3]}
+                                            </a>
+                                        </p>
+                                        </div>
+                                    )}
+                                    {/* 두 번째 파일 다운로드 링크로 표시 */}
+                                    {report.filePaths[4] && (
+                                        <div style={{ marginTop: "16px", display:"flex"}}>
+                                        <p>
+                                            <strong>소스 프로그램:</strong>{" "}
+                                            <a
+                                                href={`http://localhost:8080/${report.filePaths[4]}`}
+                                                download={report.fileNames[4]}
+                                                style={{
+                                                    color: "blue",                                                    
+                                                }}
+                                            >
+                                                {report.fileNames[4]}
+                                            </a>
+                                        </p>
+                                        </div>
+                                    )}      
+                                    {/* 두 번째 파일 다운로드 링크로 표시 */}
+                                    {report.filePaths[5] && (
+                                        <div style={{ marginTop: "16px", display:"flex"}}>
+                                        <p>
+                                            <strong>결과 보고서:</strong>{" "}
+                                            <a
+                                                href={`http://localhost:8080/${report.filePaths[5]}`}
+                                                download={report.fileNames[5]}
+                                                style={{
+                                                    color: "blue",                                                    
+                                                }}
+                                            >
+                                                {report.fileNames[5]}
+                                            </a>
+                                        </p>
+                                        </div>
+                                    )}                                                                                                                                          
                                 </>
                             )}
                         </div>
