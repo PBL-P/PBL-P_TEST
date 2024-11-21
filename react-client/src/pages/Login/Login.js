@@ -213,7 +213,7 @@ const Login = () => {
       <LoginContainer>
         <LoginCardex></LoginCardex>
         <LoginCard>
-          <Title>LOGIN</Title>
+          <Title>프로젝트 기반 학습</Title>
           <form style={{ width: "70%" }} onSubmit={handleSubmit}>
             <FormGroup>
               <FormIdInput

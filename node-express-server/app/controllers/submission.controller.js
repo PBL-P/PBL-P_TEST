@@ -6,48 +6,59 @@ const path = require('path');
 const fs = require('fs');
 const DocumentType = db.document_type; 
 
-// 파일 업로드를 위한 multer 설정
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // 파일이 저장될 경로 설정
+    cb(null, 'uploads/'); // 저장 경로 설정
   },
   filename: function (req, file, cb) {
-    // 파일명을 UTF-8로 변환하여 저장
-    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8'); 
-    cb(null, originalName); // 파일명에 타임스탬프 추가하여 저장
+    // 파일명 변환: latin1 -> utf8
+    const convertedFileName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    console.log("Original Filename (Before Conversion):", file.originalname);
+    console.log("Converted Filename (After Conversion):", convertedFileName);
+    cb(null, convertedFileName); // 변환된 파일명으로 저장
   }
 });
+
 const upload = multer({ storage: storage });
 
-// Create and Save a new Submission
+
+
 exports.create = [upload.array('files', 5), async (req, res) => {
   try {
-    console.log("Request files:", req.files); // 파일 로그 확인
-    console.log("Request body:", req.body); // 요청 바디 확인
+    console.log("Uploaded Files:", req.files.map(file => file.originalname));
+    // 파일명과 경로를 변환하여 저장
+    const fileNames = req.files
+      .map(file => Buffer.from(file.originalname, 'latin1').toString('utf8'))
+      .join('|');
 
-    // 파일명과 경로를 |로 구분하여 하나의 문자열로 저장
-    const fileNames = req.files.map(file => file.originalname).join('|');
     const filePaths = req.files.map(file => file.path).join('|');
 
+
+    // 로그로 확인
+    console.log("Converted File Names:", fileNames);
+    console.log("Converted File Paths:", filePaths);
+
+
     const submission = {
-      document_type_id: req.body.document_type_id, // 문자열 타입 유지
+      document_type_id: req.body.document_type_id,
       title: req.body.title,
       teamName: req.body.teamName,
       member: req.body.member,
       thought: req.body.thought,
-      fileName: fileNames || null, // 파일 이름
-      filePath: filePaths || null  // 파일 경로
+      fileName: fileNames, // 깨지지 않은 파일명 저장
+      filePath: filePaths
     };
 
     const data = await Submission.create(submission);
-    return res.status(201).send(data); // 성공 시 응답 반환
+    res.status(201).send(data);
   } catch (err) {
-    console.error("Error during submission creation:", err.message);
-    return res.status(500).send({
-      message: err.message || "Some error occurred while creating the Submission."
-    });
+    console.error("Error:", err.message);
+    res.status(500).send({ message: err.message || "File upload failed" });
   }
 }];
+
+
 
 
 exports.findAll = async (req, res) => {

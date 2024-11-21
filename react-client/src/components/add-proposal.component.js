@@ -195,25 +195,42 @@ const AddProposal = ({ text, kind }) => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("document_type_id", getDocumentKey());
-
+  
     if (kind === "instruction" || kind === "example") {
       formData.append("content", content);
-
+  
       if (presentationFile) {
+        console.log("Presentation File:", presentationFile.name); // 파일명 출력
         formData.append("file", presentationFile); // 'file' 키로 전송
       }
     } else if (kind === "version" || kind === "report") {
       formData.append("teamName", teamName);
       formData.append("member", member);
       formData.append("thought", thought);
-
-      if (presentationFile) formData.append("files", presentationFile);
-      if (videoFile) formData.append("files", videoFile);
-      if (demoVideo) formData.append("files", demoVideo);
-      if (sourceFile) formData.append("files", sourceFile);
-      if (reportFile) formData.append("files", reportFile);
+  
+      // 각 파일의 정보를 출력
+      if (presentationFile) {
+        console.log("Presentation File:", presentationFile.name); // 파일명 출력
+        formData.append("files", presentationFile);
+      }
+      if (videoFile) {
+        console.log("Video File:", videoFile.name); // 파일명 출력
+        formData.append("files", videoFile);
+      }
+      if (demoVideo) {
+        console.log("Demo Video:", demoVideo.name); // 파일명 출력
+        formData.append("files", demoVideo);
+      }
+      if (sourceFile) {
+        console.log("Source File:", sourceFile.name); // 파일명 출력
+        formData.append("files", sourceFile);
+      }
+      if (reportFile) {
+        console.log("Report File:", reportFile.name); // 파일명 출력
+        formData.append("files", reportFile);
+      }
     }
-
+  
     const saveFunction =
       kind === "instruction"
         ? id
@@ -226,18 +243,21 @@ const AddProposal = ({ text, kind }) => {
         : id
         ? ProposalDataService.s_update
         : ProposalDataService.s_create;
-
+  
+    console.log("Form Data:", Array.from(formData.entries())); // FormData 로그 출력
+  
     const request = id ? saveFunction(id, formData) : saveFunction(formData);
-    
+  
     request
       .then((response) => {
         setSubmitted(true);
-        console.log("Response:", response.data);
+        console.log("Response:", response.data); // 서버 응답 로그
       })
       .catch((e) => {
-        console.error("Error:", e.response ? e.response.data : e.message);
+        console.error("Error:", e.response ? e.response.data : e.message); // 에러 로그
       });
   };
+  
 
   const newProposal = () => {
     setRedirect(true);
