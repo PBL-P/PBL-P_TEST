@@ -1,4 +1,4 @@
-import { FaProjectDiagram, FaFileAlt, FaClipboardList, FaCog, FaSearch, FaBell } from 'react-icons/fa';
+import { FaProjectDiagram, FaFileAlt, FaClipboardList, FaCog, FaSearch, FaBell, FaCalendarAlt} from 'react-icons/fa';
 
 // 좌측 메뉴바 데이터
 export const menuData = [
@@ -7,7 +7,8 @@ export const menuData = [
   { id: 3, label: '기획서', icon: <FaClipboardList />, route: '/plan', activeColor: '#68CF34', },
   { id: 4, label: '설계서', icon: <FaCog />, route: '/design' ,  activeColor: '#D98A29'},
   { id: 5, label: '결과 보고서', icon: <FaSearch />, route: '/report', activeColor: '#339ADE', },
-  { id: 6, label: '공지사항', icon: <FaBell />, route: '/announcement', activeColor: '#dc3545', }
+  { id: 6, label: '일정 관리', icon: <FaCalendarAlt />, route: '/schedule', activeColor: '#BF00FF' },
+  { id: 7, label: '공지사항', icon: <FaBell />, route: '/announcement', activeColor: '#dc3545', }
 ];
 
 // 내용 안에 상단 Tabs 데이터

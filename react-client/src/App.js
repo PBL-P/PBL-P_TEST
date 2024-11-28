@@ -20,13 +20,11 @@ import ProposalSubmitDetail from "./pages/Proposal/ProposalSubmitDetail";
 import ProposalExampleDetail from "./pages/Proposal/ProposalExampleDetail";
 
 import Plan from "./pages/Plan/Plan";
-import PlanSubmit from "./pages/Plan/PlanSubmit";
 import PlanDetail from "./pages/Plan/PlanDetail";
 import PlanSubmitDetail from "./pages/Plan/PlanSubmitDetail";
 import PlanExampleDetail from "./pages/Plan/PlanExampleDetail";
 
 import Design from "./pages/Design/Design";
-import DesignSubmit from "./pages/Design/DesignSubmit";
 import DesignDetail from "./pages/Design/DesignDetail";
 import DesignSubmitDetail from "./pages/Design/DesignSubmitDetail";
 import DesignExampleDetail from "./pages/Design/DesignExampleDetail";
@@ -41,6 +39,9 @@ import ReportExampleDetail from "./pages/Report/ReportExampleDetail";
 import Announcement from "./pages/Announcement/Announcement";
 import AddAnnouncement from "./pages/Announcement/AddAnnouncement";
 import AnnouncementDetail from "./pages/Announcement/AnnouncementDetail";
+
+import Schedule from "./pages/Schedule/Schedule";
+
 
 import Login from "./pages/Login/Login";
 
@@ -265,6 +266,10 @@ const App = () => {
                 }
               />
               {/* 결과 보고서 부분 종료 */}
+
+              {/* 일정 관리 부분 시작 */}
+              <Route path="/schedule" element={<Schedule />} />              
+              {/* 일정 관리 부분 종료 */}
 
               {/* 공지사항 부분 시작 */}
               <Route path="/announcement" element={<Announcement />} />
