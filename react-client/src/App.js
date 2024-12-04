@@ -41,6 +41,9 @@ import AddAnnouncement from "./pages/Announcement/AddAnnouncement";
 import AnnouncementDetail from "./pages/Announcement/AnnouncementDetail";
 
 import Schedule from "./pages/Schedule/Schedule";
+import ScheduleDetail from "./pages/Schedule/ScheduleDetail";
+
+import Requirement from "./pages/Requirement/Requirement";
 
 
 import Login from "./pages/Login/Login";
@@ -269,7 +272,12 @@ const App = () => {
 
               {/* 일정 관리 부분 시작 */}
               <Route path="/schedule" element={<Schedule />} />              
+              <Route path="/schedule/register" element={<ScheduleDetail />} />              
               {/* 일정 관리 부분 종료 */}
+              
+              {/* 요구 분석 부분 시작 */}
+              <Route path="/requirement" element={<Requirement />} />              
+              {/* 요구 분석 부분 종료 */}
 
               {/* 공지사항 부분 시작 */}
               <Route path="/announcement" element={<Announcement />} />
