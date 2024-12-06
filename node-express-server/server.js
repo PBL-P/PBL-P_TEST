@@ -38,6 +38,7 @@ require('./app/routes/submission.routes.js')(app);
 require('./app/routes/instruction.routes.js')(app);
 require('./app/routes/example.routes.js')(app);
 require('./app/routes/announcement.routes.js')(app);
+require("./app/routes/schedule.routes")(app);
 
 // 인증 관련 라우터 추가
 const authRoutes = require('./app/routes/auth.routes.js'); // 라우터 가져오기
